@@ -25,5 +25,5 @@ pip install torch==2.0.1 -f https://download.pytorch.org/whl/cu118
 pip install torchvision==0.15.2 -f https://download.pytorch.org/whl/cu118
 pip install torchaudio==2.0.2 -f https://download.pytorch.org/whl/cu118
 pip install dglgo==0.0.2
-pip install dgl-cu118 -f https://data.dgl.ai/wheels/cu118/repo.html
+pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
 ```
