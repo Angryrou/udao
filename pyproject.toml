@@ -1,0 +1,84 @@
+[project]
+# This is the name of your project. The first time you publish this
+# package, this name will be registered for you. It will determine how
+# users can install this project, e.g.:
+#
+# $ pip install sampleproject
+#
+# And where it will live on PyPI: https://pypi.org/project/sampleproject/
+#
+# There are some restrictions on what makes a valid project name
+# specification here:
+# https://packaging.python.org/specifications/core-metadata/#name
+authors = [
+  {name = "Chenghao Lyu", email = "chenghao@cs.umass.edu"}, # Optional
+  {name = "Julien Fontanarava", email = "julien.fontanarava@gmail.com"},
+]
+description = "" # Optional
+license = {file = "LICENSE"}
+maintainers = [
+  {name = "Chenghao Lyu", email = "chenghao@cs.umass.edu"}, # Optional
+]
+name = "udao" # Required
+readme = "README.md" # Optional
+requires-python = ">=3.9"
+version = "1.0.0" # Required
+
+# Classifiers help users find your project by categorizing it.
+# For a list of valid classifiers, see https://pypi.org/classifiers/
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Build Tools",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+  "mypy==1.5.1",
+  "mypy-extensions==1.0.0",
+  "networkx==2.8.8",
+  "networkx-stubs==0.0.1",
+  "numpy==1.26.1",
+  "pandas==2.1.1",
+  "pandas-stubs==2.1.1.230928",
+  "scikit-learn==1.3.1",
+  "pytorch-warmup==0.1.1",
+  "lightning==2.1.0",
+  "torchmetrics==1.2.0",
+  "gensim==4.3.0",
+  "matplotlib==3.8.1",
+  "Platypus-Opt==1.1.0",
+  "tensorboard==2.15.1",
+  "dgl==1.1.3",
+  "torch==2.0.1",
+]
+
+[project.optional-dependencies] # Optional
+dev = ["pre-commit==3.4.0"]
+test = [
+  "pytest==7.4.2",
+  "pytest-cov==4.1.0",
+  "pytest-mock==3.12.0",
+]
+
+# List URLs that are relevant to your project
+#
+# This field corresponds to the "Project-URL" and "Home-Page" metadata fields:
+# https://packaging.python.org/specifications/core-metadata/#project-url-multiple-use
+# https://packaging.python.org/specifications/core-metadata/#home-page-optional
+#
+# Examples listed include a pattern for specifying where the package tracks
+# issues, where the source is hosted, where to say thanks to the package
+# maintainers, and where to support the project financially. The key is
+# what's used to render the link text on PyPI.
+[project.urls] # Optional
+"Bug Reports" = "https://github.com/angryrou/udao/issues"
+"Source" = "https://github.com/angryrou/udao/"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=43.0.0", "wheel"]

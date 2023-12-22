@@ -1,0 +1,8 @@
+cuda-python==11.8
+dglgo==0.0.2
+torch==2.0.1 -f https://download.pytorch.org/whl/cu118
+torchvision==0.15.2 -f https://download.pytorch.org/whl/cu118
+torchaudio==2.0.2 -f https://download.pytorch.org/whl/cu118
+dgl-cu118 -f https://data.dgl.ai/wheels/cu118/repo.html
+
+-r requirements.txt
