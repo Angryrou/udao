@@ -1,0 +1,14 @@
+{
+  "query_plan": "Sort [l_returnflag#31 ASC NULLS FIRST, l_linestatus#32 ASC NULLS FIRST], true, Statistics(sizeInBytes=780.0 B, rowCount=6)\n+- Aggregate [l_returnflag#31, l_linestatus#32], [l_returnflag#31, l_linestatus#32, sum(l_quantity#27) AS sum_qty#359340, sum(l_extendedprice#28) AS sum_base_price#359341, sum(CheckOverflow((promote_precision(cast(l_extendedprice#28 as decimal(13,2))) * promote_precision(CheckOverflow((1.00 - promote_precision(cast(l_discount#29 as decimal(13,2)))), DecimalType(13,2), true))), DecimalType(26,4), true)) AS sum_disc_price#359342, sum(CheckOverflow((promote_precision(CheckOverflow((promote_precision(cast(l_extendedprice#28 as decimal(13,2))) * promote_precision(CheckOverflow((1.00 - promote_precision(cast(l_discount#29 as decimal(13,2)))), DecimalType(13,2), true))), DecimalType(26,4), true)) * promote_precision(cast(CheckOverflow((1.00 + promote_precision(cast(l_tax#30 as decimal(13,2)))), DecimalType(13,2), true) as decimal(26,4)))), DecimalType(38,6), true)) AS sum_charge#359343, avg(l_quantity#27) AS avg_qty#359344, avg(l_extendedprice#28) AS avg_price#359345, avg(l_discount#29) AS avg_disc#359346, count(1) AS count_order#359347L], Statistics(sizeInBytes=780.0 B, rowCount=6)\n   +- Project [l_quantity#27, l_extendedprice#28, l_discount#29, l_tax#30, l_returnflag#31, l_linestatus#32], Statistics(sizeInBytes=35.3 GiB, rowCount=5.75E+8)\n      +- Filter (isnotnull(l_shipdate#38) AND (l_shipdate#38 <= 1998-08-17)), Statistics(sizeInBytes=99.6 GiB, rowCount=5.75E+8)\n         +- Relation tpch_100.lineitem[l_orderkey#23L,l_partkey#24L,l_suppkey#25L,l_linenumber#26,l_quantity#27,l_extendedprice#28,l_discount#29,l_tax#30,l_returnflag#31,l_linestatus#32,l_commitdate#33,l_receiptdate#34,l_shipinstruct#35,l_shipmode#36,l_comment#37,l_shipdate#38] parquet, Statistics(sizeInBytes=99.6 GiB, rowCount=5.75E+8)",
+  "incoming_ids": [1, 2, 3, 4],
+  "outgoing_ids": [0, 1, 2, 3],
+  "names": [
+    "Sort",
+    "Aggregate",
+    "Project",
+    "Filter",
+    "Relation tpch_100.lineitem"
+  ],
+  "row_counts": ["6", "6", "5.75E+8", "5.75E+8", "5.75E+8"],
+  "sizes": ["780.0 B", "780.0 B", "35.3 GiB", "99.6 GiB", "99.6 GiB"]
+}
