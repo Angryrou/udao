@@ -41,6 +41,8 @@ class MOGD(SOSolver):
         """stress term for objective functions"""
         constraint_stress: float = 1e5
         """stress term for constraint functions"""
+        int_rounding_mode: str = "auto"
+        """rounding mode for integer variables, supporting "auto", "all", "once" """
         batch_size: int = 1
         """batch size for gradient descent"""
         device: Optional[th.device] = field(default_factory=get_default_device)
@@ -56,9 +58,12 @@ class MOGD(SOSolver):
         self.multistart = params.multistart
         self.objective_stress = params.objective_stress
         self.constraint_stress = params.constraint_stress
+        self.int_rounding_mode = params.int_rounding_mode
         self.batch_size = params.batch_size
         self.device = params.device
         self.dtype = params.dtype
+
+        assert self.int_rounding_mode in ["auto", "all", "once"], f"Invalid rounding mode {self.int_rounding_mode}!"
 
     def _get_unprocessed_input_values(
         self,
@@ -393,7 +398,7 @@ class MOGD(SOSolver):
         best_iter = 0
         best_loss = np.inf
         best_obj: Optional[float] = None
-        best_raw_vars: Optional[Dict[str, Any]] = None
+        best_vars: Optional[Dict[str, Any]] = None
         # Random numeric variables and their characteristics
         (
             input_data,
@@ -466,9 +471,8 @@ class MOGD(SOSolver):
                     ):
                         best_loss = loss.item()
                         best_obj = obj_value.cpu().item()
-                        best_raw_vars = raw_vars
-
-                    best_iter = i
+                        best_vars = raw_vars
+                        best_iter = i
 
             # Update input_vars_subvector with constrained values
             input_vars_subvector.data = th.clip(
@@ -480,10 +484,10 @@ class MOGD(SOSolver):
             if i > best_iter + self.patience:
                 break
             i += 1
-        if best_obj is not None and best_raw_vars is not None:
-            self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
 
-            return best_obj, best_raw_vars, best_loss
+        if best_obj is not None and best_vars is not None:
+            self._log_success(problem, i, best_obj, best_iter, best_vars)
+            return best_obj, best_vars, best_loss
         else:
             self._log_failure(problem, i)
             raise NoSolutionError
