@@ -63,7 +63,11 @@ class MOGD(SOSolver):
         self.device = params.device
         self.dtype = params.dtype
 
-        assert self.int_rounding_mode in ["auto", "all", "once"], f"Invalid rounding mode {self.int_rounding_mode}!"
+        assert self.int_rounding_mode in [
+            "auto",
+            "all",
+            "once",
+        ], f"Invalid rounding mode {self.int_rounding_mode}!"
 
     def _get_unprocessed_input_values(
         self,

@@ -117,10 +117,15 @@ class TestMOGD:
     @pytest.mark.parametrize(
         "gpu, strict_rounding, expected_obj, expected_vars",
         [
+<<<<<<< HEAD
             (False, True, 1, {"v1": 1.0, "v2": 3.0}),
             (False, False, 1, {"v1": 1.0, "v2": 3.0}),
             (True, True, 1, {"v1": 1.0, "v2": 3.0}),
             (True, False, 1, {"v1": 1.0, "v2": 3.0}),
+=======
+            (False, 1, {"v1": 1.0, "v2": 3.0}),
+            (True, 1, {"v1": 1.0, "v2": 2.0}),
+>>>>>>> 9b459ff (diverse random choices for different variables)
         ],
     )
     def test_solve(
