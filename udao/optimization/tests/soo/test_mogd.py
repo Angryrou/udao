@@ -117,7 +117,7 @@ class TestMOGD:
     @pytest.mark.parametrize(
         "gpu, expected_obj, expected_vars",
         [
-            (False, 1, {"v1": 1.0, "v2": 2.0}),
+            (False, 1, {"v1": 1.0, "v2": 3.0}),
             (True, 1, {"v1": 1.0, "v2": 2.0}),
         ],
     )

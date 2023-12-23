@@ -63,7 +63,11 @@ class MOGD(SOSolver):
         self.device = params.device
         self.dtype = params.dtype
 
-        assert self.int_rounding_mode in ["auto", "all", "once"], f"Invalid rounding mode {self.int_rounding_mode}!"
+        assert self.int_rounding_mode in [
+            "auto",
+            "all",
+            "once",
+        ], f"Invalid rounding mode {self.int_rounding_mode}!"
 
     def _get_unprocessed_input_values(
         self,
@@ -90,9 +94,9 @@ class MOGD(SOSolver):
         """
         numeric_values: Dict[str, np.ndarray] = {}
 
-        for name, variable in numeric_variables.items():
+        for i, (name, variable) in enumerate(numeric_variables.items()):
             numeric_values[name] = co.variable.get_random_variable_values(
-                variable, self.batch_size, seed=seed
+                variable, self.batch_size, seed=seed + i if seed is not None else None
             )
         return derive_unprocessed_input(
             input_variables=numeric_values,
@@ -127,9 +131,9 @@ class MOGD(SOSolver):
         """
         numeric_values: Dict[str, np.ndarray] = {}
 
-        for name, variable in numeric_variables.items():
+        for i, (name, variable) in enumerate(numeric_variables.items()):
             numeric_values[name] = co.variable.get_random_variable_values(
-                variable, self.batch_size, seed=seed
+                variable, self.batch_size, seed=seed + i if seed is not None else None
             )
         input_data, iterator = derive_processed_input(
             data_processor=data_processor,
