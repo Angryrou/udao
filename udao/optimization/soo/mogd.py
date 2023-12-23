@@ -41,8 +41,8 @@ class MOGD(SOSolver):
         """stress term for objective functions"""
         constraint_stress: float = 1e5
         """stress term for constraint functions"""
-        strict_rounding: bool = False
-        """whether strictly rounding integer variables at each iteration. """
+        int_rounding_mode: str = "auto"
+        """rounding mode for integer variables, supporting "auto", "all", "once" """
         batch_size: int = 1
         """batch size for gradient descent"""
         device: Optional[th.device] = field(default_factory=get_default_device)
@@ -58,10 +58,12 @@ class MOGD(SOSolver):
         self.multistart = params.multistart
         self.objective_stress = params.objective_stress
         self.constraint_stress = params.constraint_stress
-        self.strict_rounding = params.strict_rounding
+        self.int_rounding_mode = params.int_rounding_mode
         self.batch_size = params.batch_size
         self.device = params.device
         self.dtype = params.dtype
+
+        assert self.int_rounding_mode in ["auto", "all", "once"], f"Invalid rounding mode {self.int_rounding_mode}!"
 
     def _get_unprocessed_input_values(
         self,
@@ -426,7 +428,7 @@ class MOGD(SOSolver):
         best_iter: Optional[int] = None
         best_loss = np.inf
         best_obj: Optional[float] = None
-        best_feature_input: Optional[th.Tensor] = None
+        best_vars: Optional[Dict[str, Any]] = None
         # Random numeric variables and their characteristics
         (
             input_data,
@@ -471,7 +473,31 @@ class MOGD(SOSolver):
                     best_feature_input = (
                         input_data.features.detach()[min_loss_id].clone().reshape(1, -1)
                     )
-                    best_iter = i
+                    obj_value = problem.apply_function(problem.objective, raw_vars)
+                    is_within_objective_bounds = self.within_objective_bounds(
+                        obj_value.item(), problem.objective
+                    )
+                    loss = self.objective_loss(obj_value, problem.objective)
+                    is_within_constraints = True
+                    if problem.constraints:
+                        constraint_loss = self.constraints_loss(
+                            [
+                                problem.apply_function(constraint, raw_vars)
+                                for constraint in problem.constraints
+                            ],
+                            problem.constraints,
+                        )
+                        loss += constraint_loss
+                        is_within_constraints = bool((constraint_loss == 0).item())
+                    if (
+                        is_within_objective_bounds
+                        and is_within_constraints
+                        and loss.item() < best_loss
+                    ):
+                        best_loss = loss.item()
+                        best_obj = obj_value.cpu().item()
+                        best_vars = raw_vars
+                        best_iter = i
 
             with th.no_grad():
                 # Update input_vars_subvector with constrained values
@@ -509,7 +535,10 @@ class MOGD(SOSolver):
                 break
             i += 1
 
-        if best_iter is None or best_obj is None or best_feature_input is None:
+        if best_obj is not None and best_vars is not None:
+            self._log_success(problem, i, best_obj, best_iter, best_vars)
+            return best_obj, best_vars, best_loss
+        else:
             self._log_failure(problem, i)
             raise NoSolutionError
 
