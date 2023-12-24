@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 import torch as th
@@ -217,7 +217,10 @@ class MOGD(SOSolver):
             return lower_input, upper_input
 
     def _gradient_descent(
-        self, problem: co.SOProblem, input_data: Any, optimizer: th.optim.Optimizer
+        self,
+        problem: co.SOProblem,
+        input_data: Union[UdaoInput, Dict],
+        optimizer: th.optim.Optimizer,
     ) -> Tuple[int, float, float]:
         """Perform a gradient descent step on input variables
 
@@ -312,7 +315,9 @@ class MOGD(SOSolver):
             input_variable_values,
             input_parameter_values,
         ) = self._get_unprocessed_input_values(
-            cast(Dict[str, co.NumericVariable], problem.variables), seed=seed
+            cast(Dict[str, co.NumericVariable], problem.variables),
+            input_parameters=problem.input_parameters,
+            seed=seed,
         )
         lower_input, upper_input = self._get_unprocessed_input_bounds(
             cast(Dict[str, co.NumericVariable], problem.variables)
@@ -329,7 +334,10 @@ class MOGD(SOSolver):
             try:
                 min_loss_id, min_loss, local_best_obj = self._gradient_descent(
                     problem,
-                    {**input_variable_values, **input_parameter_values},
+                    {
+                        "input_variables": input_variable_values,
+                        "input_parameters": input_parameter_values,
+                    },
                     optimizer=optimizer,
                 )
             except UncompliantSolutionError:
@@ -372,7 +380,11 @@ class MOGD(SOSolver):
                     if isinstance(problem.variables[k], co.IntegerVariable):
                         best_feature_input[k].data = best_feature_input[k].data.round()
                 _, best_loss, best_obj, _, is_within_constraint = self._compute_loss(
-                    problem, {**best_feature_input, **input_parameter_values}
+                    problem,
+                    {
+                        "input_variables": best_feature_input,
+                        "input_parameters": input_parameter_values,
+                    },
                 )
                 if not is_within_constraint or not self.within_objective_bounds(
                     best_obj, problem.objective
@@ -760,15 +772,22 @@ class MOGD(SOSolver):
         return loss
 
     def _compute_loss(
-        self, problem: co.SOProblem, input_data: Any
+        self, problem: co.SOProblem, input_data: Union[UdaoInput, Dict]
     ) -> Tuple[th.Tensor, float, float, int, bool]:
-        obj_output = problem.objective.function(input_data)
+        obj_output = (
+            problem.objective.function(input_data)  # type: ignore
+            if isinstance(input_data, UdaoInput)
+            else problem.objective.function(**input_data)
+        )
         objective_loss = self.objective_loss(obj_output, problem.objective)
         constraint_loss = th.zeros_like(objective_loss, device=self.device)
 
         if problem.constraints:
             const_outputs = [
-                constraint.function(input_data) for constraint in problem.constraints
+                constraint.function(input_data)  # type: ignore
+                if isinstance(input_data, UdaoInput)
+                else constraint.function(**input_data)
+                for constraint in problem.constraints
             ]
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
 
