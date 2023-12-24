@@ -61,8 +61,8 @@ def mogd() -> MOGD:
     params = MOGD.Params(
         learning_rate=0.1,
         max_iters=100,
-        patience=10,
-        multistart=10,
+        patience=30,
+        multistart=2,
         objective_stress=10,
     )
     mogd = MOGD(params)
@@ -104,8 +104,8 @@ def paper_mogd() -> MOGD:
     params = MOGD.Params(
         learning_rate=0.1,
         max_iters=100,
-        patience=100,
-        multistart=10,
+        patience=30,
+        multistart=2,
         objective_stress=10,
     )
     mogd = MOGD(params)
@@ -115,10 +115,12 @@ def paper_mogd() -> MOGD:
 
 class TestMOGD:
     @pytest.mark.parametrize(
-        "gpu, expected_obj, expected_vars",
+        "gpu, strict_rounding, expected_obj, expected_vars",
         [
-            (False, 1, {"v1": 1.0, "v2": 3.0}),
-            (True, 1, {"v1": 1.0, "v2": 2.0}),
+            (False, True, 1, {"v1": 1.0, "v2": 3.0}),
+            (False, False, 1, {"v1": 1.0, "v2": 3.0}),
+            (True, True, 1, {"v1": 1.0, "v2": 3.0}),
+            (True, False, 1, {"v1": 1.0, "v2": 3.0}),
         ],
     )
     def test_solve(
@@ -126,6 +128,7 @@ class TestMOGD:
         mogd: MOGD,
         data_processor: DataProcessor,
         gpu: bool,
+        strict_rounding: bool,
         expected_obj: float,
         expected_vars: Dict[str, float],
     ) -> None:
@@ -134,6 +137,7 @@ class TestMOGD:
         if gpu and not th.cuda.is_available():
             pytest.skip("Skip GPU test")
         set_deterministic_torch(0)
+        mogd.strict_rounding = strict_rounding
 
         problem = co.SOProblem(
             data_processor=data_processor,
@@ -159,21 +163,32 @@ class TestMOGD:
         assert optimal_vars == expected_vars
 
     @pytest.mark.parametrize(
-        "variable, expected_obj, expected_variable, batch_size",
+        "strict_rounding, variable, batch_size, expected_obj, expected_vars",
         [
-            (co.FloatVariable(0, 24), 148.17662, {"cores": 16.2}, 1),
-            (co.FloatVariable(0, 24), 148.17662, {"cores": 16.2}, 16),
-            (co.IntegerVariable(0, 24), 150, {"cores": 16}, 1),
-            (co.IntegerVariable(0, 24), 150, {"cores": 16}, 16),
+            (
+                True,
+                co.IntegerVariable(0, 24),
+                1,
+                200,
+                {"cores": 12},
+            ),  # can be improved by data normalizaiton or truning off strict_rounding.
+            (True, co.IntegerVariable(0, 24), 16, 150, {"cores": 16}),
+            (True, co.FloatVariable(0, 24), 1, 148.17662, {"cores": 16.2}),
+            (True, co.FloatVariable(0, 24), 16, 148.17662, {"cores": 16.2}),
+            (False, co.IntegerVariable(0, 24), 1, 150, {"cores": 16}),
+            (False, co.IntegerVariable(0, 24), 16, 150, {"cores": 16}),
+            (False, co.FloatVariable(0, 24), 1, 148.17662, {"cores": 16.2}),
+            (False, co.FloatVariable(0, 24), 16, 148.17662, {"cores": 16.2}),
         ],
     )
     def test_solve_paper(
         self,
         paper_mogd: MOGD,
+        strict_rounding: bool,
         variable: co.Variable,
-        expected_obj: float,
-        expected_variable: Dict[str, float],
         batch_size: int,
+        expected_obj: float,
+        expected_vars: Dict[str, float],
     ) -> None:
         problem = co.SOProblem(
             objective=co.Objective(
@@ -195,6 +210,7 @@ class TestMOGD:
             ],
         )
         paper_mogd.batch_size = batch_size
+        paper_mogd.strict_rounding = strict_rounding
         optimal_obj, optimal_vars = paper_mogd.solve(problem, seed=0)
         logger.debug(f"optimal_obj: {optimal_obj}, optimal_vars: {optimal_vars}")
         assert optimal_obj is not None
@@ -202,7 +218,7 @@ class TestMOGD:
         assert optimal_vars is not None
         assert len(optimal_vars) == 1
         np.testing.assert_allclose(
-            [optimal_vars["cores"]], [expected_variable["cores"]], rtol=1e-3
+            [optimal_vars["cores"]], [expected_vars["cores"]], rtol=1e-3
         )
 
     def test_solve_no_constraints(

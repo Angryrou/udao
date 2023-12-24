@@ -41,8 +41,8 @@ class MOGD(SOSolver):
         """stress term for objective functions"""
         constraint_stress: float = 1e5
         """stress term for constraint functions"""
-        int_rounding_mode: str = "auto"
-        """rounding mode for integer variables, supporting "auto", "all", "once" """
+        strict_rounding: bool = False
+        """whether strictly rounding integer variables at each iteration. """
         batch_size: int = 1
         """batch size for gradient descent"""
         device: Optional[th.device] = field(default_factory=get_default_device)
@@ -58,16 +58,10 @@ class MOGD(SOSolver):
         self.multistart = params.multistart
         self.objective_stress = params.objective_stress
         self.constraint_stress = params.constraint_stress
-        self.int_rounding_mode = params.int_rounding_mode
+        self.strict_rounding = params.strict_rounding
         self.batch_size = params.batch_size
         self.device = params.device
         self.dtype = params.dtype
-
-        assert self.int_rounding_mode in [
-            "auto",
-            "all",
-            "once",
-        ], f"Invalid rounding mode {self.int_rounding_mode}!"
 
     def _get_unprocessed_input_values(
         self,
@@ -110,7 +104,7 @@ class MOGD(SOSolver):
         data_processor: DataProcessor,
         input_parameters: Optional[Dict[str, Any]] = None,
         seed: Optional[int] = None,
-    ) -> Tuple[UdaoInput, UdaoItemShape, Callable[[th.Tensor], TabularContainer],]:
+    ) -> Tuple[UdaoInput, UdaoItemShape, Callable[[th.Tensor], TabularContainer]]:
         """Get random values for numeric variables
 
         Parameters
@@ -224,7 +218,7 @@ class MOGD(SOSolver):
 
     def _gradient_descent(
         self, problem: co.SOProblem, input_data: Any, optimizer: th.optim.Optimizer
-    ) -> Tuple[int, float]:
+    ) -> Tuple[int, float, float]:
         """Perform a gradient descent step on input variables
 
         Parameters
@@ -252,18 +246,24 @@ class MOGD(SOSolver):
         """
         # Compute objective, constraints and corresponding losses
 
-        loss = self.compute_loss(problem, input_data)
-
-        sum_loss = th.sum(loss)
-        min_loss, min_loss_id = th.min(loss), th.argmin(loss)
+        (
+            sum_loss,
+            min_loss,
+            best_obj,
+            min_loss_id,
+            is_within_constraint,
+        ) = self._compute_loss(problem, input_data)
 
         optimizer.zero_grad()
         sum_loss.backward()  # type: ignore
         optimizer.step()
-        return (
-            int(min_loss_id.item()),
-            min_loss.item(),
-        )
+
+        if is_within_constraint and (
+            self.within_objective_bounds(best_obj, problem.objective)
+        ):
+            return min_loss_id, min_loss, best_obj
+        else:
+            raise UncompliantSolutionError("No solution within bounds found!")
 
     def _log_success(
         self,
@@ -303,10 +303,10 @@ class MOGD(SOSolver):
         optimized directly, by being passed to the objective function along
         with the input parameters.
         """
-        best_iter = 0
+        best_iter: Optional[int] = None
         best_loss = np.inf
         best_obj: Optional[float] = None
-        best_raw_vars: Optional[Dict[str, Any]] = None
+        best_feature_input: Optional[Dict[str, th.Tensor]] = None
 
         (
             input_variable_values,
@@ -322,8 +322,12 @@ class MOGD(SOSolver):
         optimizer = optim.Adam([t for t in input_variable_values.values()], lr=self.lr)
         i = 0
         while i < self.max_iter:
+            with th.no_grad():
+                input_variable_values_backup = {
+                    k: v.detach().clone() for k, v in input_variable_values.items()
+                }
             try:
-                min_loss_id, min_loss = self._gradient_descent(
+                min_loss_id, min_loss, local_best_obj = self._gradient_descent(
                     problem,
                     {**input_variable_values, **input_parameter_values},
                     optimizer=optimizer,
@@ -332,40 +336,16 @@ class MOGD(SOSolver):
                 pass
             else:
                 if min_loss < best_loss:
-                    raw_vars = self._compute_raw_variables_from_unprocessed_input(
-                        problem=problem,
-                        input_variable_values={
-                            k: v[min_loss_id] for k, v in input_variable_values.items()
-                        },
-                    )
-                    obj_value = problem.apply_function(problem.objective, raw_vars)
-                    is_within_objective_bounds = self.within_objective_bounds(
-                        obj_value.item(), problem.objective
-                    )
-                    loss = self.objective_loss(obj_value, problem.objective)
-                    is_within_constraints = True
-                    if problem.constraints:
-                        constraint_loss = self.constraints_loss(
-                            [
-                                problem.apply_function(constraint, raw_vars)
-                                for constraint in problem.constraints
-                            ],
-                            problem.constraints,
-                        )
-                        loss += constraint_loss
-                        is_within_constraints = bool((constraint_loss == 0).item())
-                    if (
-                        is_within_objective_bounds
-                        and is_within_constraints
-                        and loss.item() < best_loss
-                    ):
-                        best_loss = loss.item()
-                        best_obj = obj_value.cpu().item()
-                        best_raw_vars = raw_vars
-
+                    best_loss = min_loss
+                    best_obj = local_best_obj
+                    best_feature_input = {
+                        k: v[min_loss_id].reshape(1, -1)
+                        for k, v in input_variable_values_backup.items()
+                    }
                     best_iter = i
-            # Update input_variable_values with constrained values
+
             with th.no_grad():
+                # Update input_variable_values with constrained values
                 for k in input_variable_values:
                     input_variable_values[k].data = th.clip(
                         input_variable_values[k].data,
@@ -373,13 +353,41 @@ class MOGD(SOSolver):
                         upper_input[k],
                     )
 
-            if i > best_iter + self.patience:
+                if self.strict_rounding:
+                    # Round all integer variables at each iteration
+                    for k in input_variable_values:
+                        if isinstance(problem.variables[k], co.IntegerVariable):
+                            input_variable_values[k].data = input_variable_values[
+                                k
+                            ].data.round()
+
+            if best_iter is not None and i > best_iter + self.patience:
                 break
             i += 1
-        if best_obj is not None:
-            self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
 
-        if best_obj is not None and best_raw_vars is not None:
+        if best_iter is not None:
+            assert best_obj is not None and best_feature_input is not None
+            if not self.strict_rounding:
+                for k in best_feature_input:
+                    if isinstance(problem.variables[k], co.IntegerVariable):
+                        best_feature_input[k].data = best_feature_input[k].data.round()
+                _, best_loss, best_obj, _, is_within_constraint = self._compute_loss(
+                    problem, {**best_feature_input, **input_parameter_values}
+                )
+                if not is_within_constraint or not self.within_objective_bounds(
+                    best_obj, problem.objective
+                ):
+                    self._log_failure(problem, i)
+                    raise NoSolutionError
+            best_raw_vars = {
+                name: best_feature_input[name]
+                .cpu()
+                .numpy()
+                .squeeze()
+                .tolist()  # turn np.ndarray to float
+                for name in problem.variables
+            }
+            self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
             return best_obj, best_raw_vars, best_loss
         else:
             self._log_failure(problem, i)
@@ -399,10 +407,10 @@ class MOGD(SOSolver):
         """
         if not problem.data_processor:
             raise Exception("Data processor is not defined!")
-        best_iter = 0
+        best_iter: Optional[int] = None
         best_loss = np.inf
         best_obj: Optional[float] = None
-        best_vars: Optional[Dict[str, Any]] = None
+        best_feature_input: Optional[th.Tensor] = None
         # Random numeric variables and their characteristics
         (
             input_data,
@@ -435,109 +443,101 @@ class MOGD(SOSolver):
             input_data.features = input_data.features.clone().detach()
             input_data.features[:, grad_indices] = input_vars_subvector
             try:
-                min_loss_id, min_loss = self._gradient_descent(
+                min_loss_id, min_loss, local_best_obj = self._gradient_descent(
                     problem, input_data, optimizer=optimizer
                 )
             except UncompliantSolutionError:
                 pass
             else:
                 if min_loss < best_loss:
-                    # Compute objective, constraints and corresponding losses
-                    # after reverting to raw variables
-                    raw_vars = self._compute_raw_variables_from_processed_input(
-                        problem=problem,
-                        feature_input=input_data.features.cpu()[min_loss_id]
-                        .detach()
-                        .clone()
-                        .reshape(1, -1),
-                        make_tabular_container=make_tabular_container,
+                    best_loss = min_loss
+                    best_obj = local_best_obj
+                    best_feature_input = (
+                        input_data.features.detach()[min_loss_id].clone().reshape(1, -1)
                     )
-                    obj_value = problem.apply_function(problem.objective, raw_vars)
-                    is_within_objective_bounds = self.within_objective_bounds(
-                        obj_value.item(), problem.objective
-                    )
-                    loss = self.objective_loss(obj_value, problem.objective)
-                    is_within_constraints = True
-                    if problem.constraints:
-                        constraint_loss = self.constraints_loss(
-                            [
-                                problem.apply_function(constraint, raw_vars)
-                                for constraint in problem.constraints
-                            ],
-                            problem.constraints,
-                        )
-                        loss += constraint_loss
-                        is_within_constraints = bool((constraint_loss == 0).item())
-                    if (
-                        is_within_objective_bounds
-                        and is_within_constraints
-                        and loss.item() < best_loss
-                    ):
-                        best_loss = loss.item()
-                        best_obj = obj_value.cpu().item()
-                        best_vars = raw_vars
-                        best_iter = i
+                    best_iter = i
 
-            # Update input_vars_subvector with constrained values
-            input_vars_subvector.data = th.clip(
-                input_vars_subvector.data,
-                # use .data to avoid gradient tracking during update
-                lower_input.features[0, grad_indices],
-                upper_input.features[0, grad_indices],
-            )
-            if i > best_iter + self.patience:
+            with th.no_grad():
+                # Update input_vars_subvector with constrained values
+                input_vars_subvector.data = th.clip(
+                    input_vars_subvector.data,
+                    # Use .data to avoid gradient tracking during update
+                    lower_input.features[0, grad_indices],
+                    upper_input.features[0, grad_indices],
+                )
+
+                if self.strict_rounding:
+                    # Round all integer variables at each iteration
+                    input_data.features[:, grad_indices] = input_vars_subvector.data
+                    feature_container = make_tabular_container(
+                        input_data.features.detach()
+                    )
+                    best_raw_df = problem.data_processor.inverse_transform(
+                        feature_container, "tabular_features"
+                    )
+                    numeric_values: Dict[str, np.ndarray] = {
+                        name: best_raw_df[[name]].values.round()
+                        if isinstance(variable, co.IntegerVariable)
+                        else best_raw_df[[name]].values
+                        for name, variable in problem.variables.items()
+                    }
+                    input_data_raw, _ = derive_processed_input(
+                        data_processor=problem.data_processor,
+                        input_parameters=problem.input_parameters or {},
+                        input_variables=numeric_values,
+                        device=self.device,
+                    )
+                    input_vars_subvector.data = input_data_raw.features[:, grad_indices]
+
+            if best_iter is not None and i > best_iter + self.patience:
                 break
             i += 1
 
-        if best_obj is not None and best_vars is not None:
-            self._log_success(problem, i, best_obj, best_iter, best_vars)
-            return best_obj, best_vars, best_loss
+        if best_iter is not None:
+            assert best_obj is not None and best_feature_input is not None
+            with th.no_grad():
+                best_feature_input = cast(th.Tensor, best_feature_input)
+                feature_container = make_tabular_container(best_feature_input)
+                best_raw_df = problem.data_processor.inverse_transform(
+                    feature_container, "tabular_features"
+                )
+                if not self.strict_rounding:
+                    best_raw_vars: Dict[str, Any] = {
+                        name: best_raw_df[[name]].values.round()  # type ignore
+                        if isinstance(variable, co.IntegerVariable)
+                        else best_raw_df[[name]].values
+                        for name, variable in problem.variables.items()
+                    }
+                    input_data_best_raw, _ = derive_processed_input(
+                        data_processor=problem.data_processor,
+                        input_parameters=problem.input_parameters or {},
+                        input_variables=best_raw_vars,
+                        device=self.device,
+                    )
+                    (
+                        _,
+                        best_loss,
+                        best_obj,
+                        _,
+                        is_within_constraint,
+                    ) = self._compute_loss(problem, input_data_best_raw)
+                    if not is_within_constraint or not self.within_objective_bounds(
+                        best_obj, problem.objective
+                    ):
+                        self._log_failure(problem, i)
+                        raise NoSolutionError
+                else:
+                    best_raw_vars = {
+                        name: best_raw_df[[name]]
+                        .values.squeeze()
+                        .tolist()  # turn np.ndarray to float
+                        for name in problem.variables
+                    }
+                self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
+                return best_obj, best_raw_vars, best_loss
         else:
             self._log_failure(problem, i)
             raise NoSolutionError
-
-    def _compute_raw_variables_from_unprocessed_input(
-        self, problem: co.SOProblem, input_variable_values: Dict[str, th.Tensor]
-    ) -> Dict[str, Any]:
-        raw_vars: Dict[str, float] = {
-            name: input_variable_values[name]
-            .detach()
-            .cpu()
-            .numpy()
-            .squeeze()
-            .tolist()  # turn np.ndarray to float
-            for name in problem.variables
-        }
-        raw_vars = {
-            name: (
-                int(round(val))
-                if isinstance(problem.variables[name], co.IntegerVariable)
-                else val
-            )
-            for name, val in raw_vars.items()
-        }
-        return raw_vars
-
-    def _compute_raw_variables_from_processed_input(
-        self,
-        problem: co.SOProblem,
-        feature_input: th.Tensor,
-        make_tabular_container: Optional[Callable[[th.Tensor], TabularContainer]],
-    ) -> Dict[str, Any]:
-        raw_variable_values = {}
-        if not problem.data_processor or make_tabular_container is None:
-            raise Exception("Data processor or make_tabular_container is not defined!")
-        feature_container = make_tabular_container(feature_input)
-        best_raw_df = problem.data_processor.inverse_transform(
-            feature_container, "tabular_features"
-        )
-        for name, variable in problem.variables.items():
-            val = best_raw_df[[name]].values.squeeze().tolist()
-
-            raw_variable_values[name] = (
-                int(round(val)) if isinstance(variable, co.IntegerVariable) else val
-            )
-        return raw_variable_values
 
     def _single_start_opt(
         self,
@@ -759,7 +759,9 @@ class MOGD(SOSolver):
             raise NotImplementedError("Objective with only one bound is not supported")
         return loss
 
-    def compute_loss(self, problem: co.SOProblem, input_data: Any) -> th.Tensor:
+    def _compute_loss(
+        self, problem: co.SOProblem, input_data: Any
+    ) -> Tuple[th.Tensor, float, float, int, bool]:
         obj_output = problem.objective.function(input_data)
         objective_loss = self.objective_loss(obj_output, problem.objective)
         constraint_loss = th.zeros_like(objective_loss, device=self.device)
@@ -771,7 +773,18 @@ class MOGD(SOSolver):
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
 
         loss = objective_loss + constraint_loss
-        return loss
+        sum_loss = th.sum(loss)
+        min_loss = th.min(loss).cpu().item()
+        min_loss_id = int(th.argmin(loss).cpu().item())
+        best_obj = obj_output[min_loss_id].cpu().item()
+
+        return (
+            sum_loss,
+            min_loss,
+            best_obj,
+            min_loss_id,
+            bool((constraint_loss[min_loss_id] == 0).item()),
+        )
 
     ##################
     ## _get (vars)  ##
@@ -809,8 +822,6 @@ class MOGD(SOSolver):
     ## _check       ##
     ##################
 
-    # check violations of objective value var_ranges
-    # reuse code in UDAO
     @staticmethod
     def within_objective_bounds(obj_value: float, objective: co.Objective) -> bool:
         """

@@ -92,14 +92,24 @@ class TestWeightedSum:
         np.testing.assert_almost_equal(po_vars[0]["v1"], 0.0, decimal=3)
         assert po_vars[0]["v2"] == 1.0
 
-    def test_solver_with_two_obj_problem_mogd(self, two_obj_problem: MOProblem) -> None:
+    @pytest.mark.parametrize(
+        "strict_rounding",
+        [
+            True,
+            False,
+        ],
+    )
+    def test_solver_with_two_obj_problem_mogd(
+        self, strict_rounding: bool, two_obj_problem: MOProblem
+    ) -> None:
         inner_solver = MOGD(
             MOGD.Params(
                 learning_rate=0.1,
                 max_iters=100,
                 patience=20,
-                multistart=5,
+                multistart=2,
                 batch_size=10,
+                strict_rounding=strict_rounding,
             )
         )
 
