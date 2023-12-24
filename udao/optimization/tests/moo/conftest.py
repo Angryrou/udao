@@ -76,7 +76,7 @@ def mogd() -> MOGD:
             learning_rate=0.1,
             max_iters=100,
             patience=10,
-            multistart=10,
+            multistart=2,
             objective_stress=10,
             constraint_stress=1e5,
             device=th.device("cpu"),
@@ -137,11 +137,7 @@ def simple_problem() -> MOProblem:
         ).get("count", 0)
 
     objectives = [
-        Objective(
-            "obj1",
-            function=obj_func1,
-            minimize=True,
-        ),
+        Objective("obj1", function=obj_func1, minimize=True),
         Objective("obj2", function=obj_func2, minimize=True),
     ]
 
