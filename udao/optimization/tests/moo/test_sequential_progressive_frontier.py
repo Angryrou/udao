@@ -113,9 +113,8 @@ class TestProgressiveFrontier:
             seed=0,
         )
         assert objectives is not None
-        # FIXME: should be [1, 1.3] and {"v1": 0.0, "v2": 3.0}
-        np.testing.assert_array_almost_equal(objectives, np.array([[1, 1.2]]))
-        assert variables[0] == {"v1": 0.0, "v2": 2.0}
+        np.testing.assert_array_almost_equal(objectives, np.array([[1, 1.3]]))
+        assert variables[0] == {"v1": 0.0, "v2": 3.0}
 
     def test_get_utopia_and_nadir_raises_when_no_points(
         self, spf: SequentialProgressiveFrontier
