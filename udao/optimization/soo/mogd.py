@@ -535,6 +535,7 @@ class MOGD(SOSolver):
                     )
                     numeric_values: Dict[str, np.ndarray] = {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         name: best_raw_df[[name]].values.round()[:, 0]
                         if isinstance(variable, co.IntegerVariable)
                         else best_raw_df[[name]].values[:, 0]
@@ -543,6 +544,11 @@ class MOGD(SOSolver):
                         if isinstance(variable, co.IntegerVariable)
                         else best_raw_df[[name]].values
 >>>>>>> 4860ed8 (mogd rework)
+=======
+                        name: best_raw_df[[name]].values.round()[:, 0]
+                        if isinstance(variable, co.IntegerVariable)
+                        else best_raw_df[[name]].values[:, 0]
+>>>>>>> 8764db0 (format)
                         for name, variable in problem.variables.items()
                     }
                     input_data_raw, _ = derive_processed_input(
@@ -567,9 +573,9 @@ class MOGD(SOSolver):
                 )
                 if not self.strict_rounding:
                     best_raw_vars: Dict[str, Any] = {
-                        name: best_raw_df[[name]].values.round()  # type ignore
+                        name: best_raw_df[[name]].values.round()[:, 0]
                         if isinstance(variable, co.IntegerVariable)
-                        else best_raw_df[[name]].values
+                        else best_raw_df[[name]].values[:, 0]
                         for name, variable in problem.variables.items()
                     }
                     input_data_best_raw, _ = derive_processed_input(
