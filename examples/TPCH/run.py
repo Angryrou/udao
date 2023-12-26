@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import cast
+from typing import Optional, cast
 
 import lightning.pytorch as pl
 import pandas as pd
@@ -14,11 +14,11 @@ from udao.data.extractors import PredicateEmbeddingExtractor, QueryStructureExtr
 from udao.data.extractors.tabular_extractor import TabularFeatureExtractor
 from udao.data.handler.data_handler import DataHandler
 from udao.data.handler.data_processor import FeaturePipeline, create_data_processor
-from udao.data.iterators.query_plan_iterator import QueryPlanInput, QueryPlanIterator
+from udao.data.iterators.query_plan_iterator import QueryPlanIterator
 from udao.data.predicate_embedders import Word2VecEmbedder, Word2VecParams
 from udao.data.preprocessors.normalize_preprocessor import NormalizePreprocessor
 from udao.model.embedders.graph_averager import GraphAverager
-from udao.model.model import UdaoModel
+from udao.model.model import DerivedUdaoModel, UdaoModel
 from udao.model.module import LearningParams, UdaoModule
 from udao.model.regressors.mlp import MLP
 from udao.model.utils.losses import WMAPELoss
@@ -26,6 +26,7 @@ from udao.model.utils.schedulers import UdaoLRScheduler, setup_cosine_annealing_
 from udao.optimization import concepts
 from udao.optimization.moo.progressive_frontier import SequentialProgressiveFrontier
 from udao.optimization.soo.mogd import MOGD
+from udao.utils.interfaces import UdaoEmbedInput
 from udao.utils.logging import logger
 
 logger.setLevel("INFO")
@@ -113,35 +114,49 @@ if __name__ == "__main__":
         },
         regressor_params={"n_layers": 2, "hidden_dim": 32, "dropout": 0.1},
     )
-    module = UdaoModule(
-        model,
-        ["latency", "cost"],
-        loss=WMAPELoss(),
-        learning_params=LearningParams(init_lr=1e-1, min_lr=1e-5, weight_decay=1e-2),
-        metrics=[WeightedMeanAbsolutePercentageError],
-    )
-    tb_logger = TensorBoardLogger("tb_logs")
-    checkpoint_callback = ModelCheckpoint(
-        dirpath="checkpoints/",
-        filename="{epoch}-val_WMAPE={val_latency_WeightedMeanAbsolutePercentageError:.2f}",
-        auto_insert_metric_name=False,
-    )
-    train_iterator = cast(QueryPlanIterator, split_iterators["train"])
-    # split_iterators["train"].set_augmentations(
-    #    [train_iterator.make_graph_augmentation(random_flip_positional_encoding)]
-    # )
-    scheduler = UdaoLRScheduler(setup_cosine_annealing_lr, warmup.UntunedLinearWarmup)
-    trainer = pl.Trainer(
-        accelerator=device,
-        max_epochs=2,
-        logger=tb_logger,
-        callbacks=[scheduler, checkpoint_callback],
-    )
-    trainer.fit(
-        model=module,
-        train_dataloaders=split_iterators["train"].get_dataloader(batch_size),
-        val_dataloaders=split_iterators["val"].get_dataloader(batch_size),
-    )
+    try:
+        module = UdaoModule.load_from_checkpoint(
+            "checkpoints/1-val_WMAPE=0.98.ckpt",
+            model=model,
+            objectives=["latency", "cost"],
+        )
+        logger.info("found checkpointed model!")
+    except BaseException:
+        logger.info("model not found from checkpoints!")
+        module = UdaoModule(
+            model,
+            ["latency", "cost"],
+            loss=WMAPELoss(),
+            learning_params=LearningParams(
+                init_lr=1e-1, min_lr=1e-5, weight_decay=1e-2
+            ),
+            metrics=[WeightedMeanAbsolutePercentageError],
+        )
+        tb_logger = TensorBoardLogger("tb_logs")
+        checkpoint_callback = ModelCheckpoint(
+            dirpath="checkpoints/",
+            filename="{epoch}-val_WMAPE={val_latency_WeightedMeanAbsolutePercentageError:.2f}",
+            auto_insert_metric_name=False,
+        )
+        train_iterator = cast(QueryPlanIterator, split_iterators["train"])
+        # split_iterators["train"].set_augmentations(
+        #    [train_iterator.make_graph_augmentation(random_flip_positional_encoding)]
+        # )
+        scheduler = UdaoLRScheduler(
+            setup_cosine_annealing_lr, warmup.UntunedLinearWarmup
+        )
+        trainer = pl.Trainer(
+            accelerator=device,
+            max_epochs=2,
+            logger=tb_logger,
+            callbacks=[scheduler, checkpoint_callback],
+        )
+        trainer.fit(
+            model=module,
+            train_dataloaders=split_iterators["train"].get_dataloader(batch_size),
+            val_dataloaders=split_iterators["val"].get_dataloader(batch_size),
+        )
+        logger.info("model trained and checkpointed.")
 
     #### Optimization
     with open(base_dir / "data" / "sample_query.txt", "r") as f:
@@ -168,22 +183,17 @@ if __name__ == "__main__":
         "m8": 846.0800000000002,
     }
 
-    class cloud_cost(th.nn.Module):
-        def __init__(self, model: th.nn.Module) -> None:
-            super().__init__()
+    class latency(DerivedUdaoModel):
+        def forward(
+            self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
+        ) -> th.Tensor:
+            return super().forward(input_data, embedding)[:, 0].reshape(-1, 1)
 
-            self.model = model
-
-        def forward(self, input_data: QueryPlanInput) -> th.Tensor:
-            return self.model(input_data)[:, 1].reshape(-1, 1)
-
-    class latency(th.nn.Module):
-        def __init__(self, model: th.nn.Module) -> None:
-            super().__init__()
-            self.model = model
-
-        def forward(self, input_data: QueryPlanInput) -> th.Tensor:
-            return self.model(input_data)[:, 0].reshape(-1, 1)
+    class cloud_cost(DerivedUdaoModel):
+        def forward(
+            self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
+        ) -> th.Tensor:
+            return super().forward(input_data, embedding)[:, 1].reshape(-1, 1)
 
     problem = concepts.MOProblem(
         data_processor=data_processor,
