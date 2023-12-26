@@ -96,7 +96,6 @@ class UdaoModule(pl.LightningModule):
     ) -> Tuple[th.Tensor, Dict[str, th.Tensor]]:
         """Compute the loss for different objectives
         and sum them with given weights, if more than one."""
-        loss = th.tensor(0)
         loss_dict: Dict[str, th.Tensor] = {
             m: self.loss(y_hat[:, i], y[:, i]) for i, m in enumerate(self.objectives)
         }
