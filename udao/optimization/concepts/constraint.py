@@ -31,6 +31,10 @@ class Constraint:
         lower: Optional[float] = None,
         upper: Optional[float] = None,
     ) -> None:
+        if isinstance(function, th.nn.Module):
+            function.eval()
+            for p in function.parameters():
+                p.requires_grad = False
         self.function = function
         self.lower = lower
         self.upper = upper

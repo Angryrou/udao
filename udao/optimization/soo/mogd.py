@@ -8,7 +8,8 @@ import torch.optim as optim
 from ...data.containers.tabular_container import TabularContainer
 from ...data.handler.data_processor import DataProcessor
 from ...data.iterators.base_iterator import UdaoIterator
-from ...utils.interfaces import UdaoInput, UdaoItemShape
+from ...model import DerivedUdaoModel
+from ...utils.interfaces import UdaoEmbedInput, UdaoInput, UdaoItemShape
 from ...utils.logging import logger
 from .. import concepts as co
 from ..concepts.utils import derive_processed_input, derive_unprocessed_input
@@ -49,6 +50,8 @@ class MOGD(SOSolver):
         """device on which to perform torch operations, by default available device."""
         dtype: th.dtype = th.float32
         """type of the tensors"""
+        embedding: Optional[th.Tensor] = None
+        """cached embedding of UdaoModel.embedder(UdaoEmbedInput.embedding_input)"""
 
     def __init__(self, params: Params) -> None:
         super().__init__()
@@ -62,6 +65,7 @@ class MOGD(SOSolver):
         self.batch_size = params.batch_size
         self.device = params.device
         self.dtype = params.dtype
+        self.embedding = params.embedding
 
     def _get_unprocessed_input_values(
         self,
@@ -219,7 +223,7 @@ class MOGD(SOSolver):
     def _gradient_descent(
         self,
         problem: co.SOProblem,
-        input_data: Union[UdaoInput, Dict],
+        input_data: Union[UdaoInput, List, Dict],
         optimizer: th.optim.Optimizer,
     ) -> Tuple[int, float, float]:
         """Perform a gradient descent step on input variables
@@ -228,9 +232,12 @@ class MOGD(SOSolver):
         ----------
         problem : co.SOProblem
             Single-objective optimization problem
-        input_data : Any
+        input_data : Union[UdaoInput, List, Dict]
             Input data - can have different types depending on whether
-            the input variables are processed or not
+            the input variables are processed or not.
+            - UdaoInput: the naive input
+            - List: [UdaoEmbedInput, embedding: th.Tensor]
+            - Dict: {"input_variables": ..., "input_parameters": ...}
 
         optimizer : th.optim.Optimizer
             PyTorch optimizer
@@ -456,7 +463,11 @@ class MOGD(SOSolver):
             input_data.features[:, grad_indices] = input_vars_subvector
             try:
                 min_loss_id, min_loss, local_best_obj = self._gradient_descent(
-                    problem, input_data, optimizer=optimizer
+                    problem,
+                    [input_data, self.embedding]
+                    if isinstance(input_data, UdaoEmbedInput)
+                    else input_data,
+                    optimizer=optimizer,
                 )
             except UncompliantSolutionError:
                 pass
@@ -612,6 +623,24 @@ class MOGD(SOSolver):
             for name, variable in problem.variables.items()
             if isinstance(variable, co.NumericVariable)
         }
+
+        if self.embedding is None:
+            if isinstance(problem.objective.function, DerivedUdaoModel):
+                assert problem.data_processor is not None
+                input_data_foo, _ = derive_processed_input(
+                    data_processor=problem.data_processor,
+                    input_variables={
+                        name: variable.lower
+                        for name, variable in numeric_variables.items()
+                    },
+                    input_parameters=problem.input_parameters,
+                )
+                assert isinstance(input_data_foo, UdaoEmbedInput)
+                self.embedding = problem.objective.function.model.embedder(
+                    input_data_foo.embedding_input
+                ).repeat(self.batch_size, 1)
+                logger.info("The embedder output has been pre-calculated.")
+
         meshed_categorical_vars = self.get_meshed_categorical_vars(problem.variables)
 
         if meshed_categorical_vars is None:
@@ -771,22 +800,30 @@ class MOGD(SOSolver):
             raise NotImplementedError("Objective with only one bound is not supported")
         return loss
 
+    def _obj_forward(
+        self,
+        optimization_element: co.Constraint,
+        input_data: Union[UdaoInput, List, Dict],
+    ) -> th.Tensor:
+        if isinstance(input_data, UdaoInput):
+            return optimization_element.function(input_data)  # type: ignore
+        elif isinstance(input_data, List):
+            # List when given [UdaoEmbedInput, embedding]
+            return optimization_element.function(*input_data)
+        else:
+            # Dict when unpreprocessed inputs
+            return optimization_element.function(**input_data)
+
     def _compute_loss(
-        self, problem: co.SOProblem, input_data: Union[UdaoInput, Dict]
+        self, problem: co.SOProblem, input_data: Union[UdaoInput, List, Dict]
     ) -> Tuple[th.Tensor, float, float, int, bool]:
-        obj_output = (
-            problem.objective.function(input_data)  # type: ignore
-            if isinstance(input_data, UdaoInput)
-            else problem.objective.function(**input_data)
-        )
+        obj_output = self._obj_forward(problem.objective, input_data)
         objective_loss = self.objective_loss(obj_output, problem.objective)
         constraint_loss = th.zeros_like(objective_loss, device=self.device)
 
         if problem.constraints:
             const_outputs = [
-                constraint.function(input_data)  # type: ignore
-                if isinstance(input_data, UdaoInput)
-                else constraint.function(**input_data)
+                self._obj_forward(constraint, input_data)
                 for constraint in problem.constraints
             ]
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
