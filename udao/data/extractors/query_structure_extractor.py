@@ -123,6 +123,9 @@ class QueryStructureExtractor(TrainedExtractor[QueryStructureContainer]):
     def _extract_op_features_exploded(
         self, df_op_features: pd.DataFrame
     ) -> Tuple[pd.DataFrame, pd.Series]:
+        """Explode the df_op_features dataframe to have one row per operation
+        in the query plans, and one column per feature of the operations."
+        """
         df_op_features_exploded = df_op_features.explode(
             ["operation_id", "operation_gid"] + list(self.feature_types.keys()),
             ignore_index=True,
