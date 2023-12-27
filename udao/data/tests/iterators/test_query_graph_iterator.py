@@ -92,6 +92,7 @@ class TestQueryGraphIterator:
 
     def test_get_graph(self, sample_iterator: QueryPlanIterator) -> None:
         graph, meta = sample_iterator._get_graph_and_meta("a")
+        assert meta is not None
         assert th.equal(meta, th.tensor([0, 10], dtype=th.float32))
         assert isinstance(graph, dgl.DGLGraph)
         assert graph.number_of_nodes() == 2

@@ -75,6 +75,7 @@ You can then follow the instructions above to install the package (either from P
 ```
 
 ## Contributing
+
 You can install the development dependencies using
 
 ```
@@ -95,3 +96,26 @@ pre-commit run --all-files
 ```
 
 Pre-commits will run automatically before every commit.
+
+### Running tests
+
+You can run the tests with:
+
+```
+poetry run pytest udao
+```
+
+### Updating dependencies
+
+When modifiying the dependencies, you can update the `pyproject.toml` file or use
+
+    ```
+    poetry add <package>
+    ```
+You can also add a dependency to a (group)[https://python-poetry.org/docs/managing-dependencies/#adding-a-dependency-to-a-group]
+
+You can then update the lock file with:
+
+```
+poetry lock
+```
