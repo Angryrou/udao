@@ -117,8 +117,10 @@ class TestMOGD:
     @pytest.mark.parametrize(
         "gpu, strict_rounding, expected_obj, expected_vars",
         [
-            (False, 1, {"v1": 1.0, "v2": 3.0}),
-            (True, 1, {"v1": 1.0, "v2": 2.0}),
+            (False, True, 1, {"v1": 1.0, "v2": 3.0}),
+            (False, False, 1, {"v1": 1.0, "v2": 3.0}),
+            (True, True, 1, {"v1": 1.0, "v2": 3.0}),
+            (True, False, 1, {"v1": 1.0, "v2": 3.0}),
         ],
     )
     def test_solve(
@@ -163,13 +165,11 @@ class TestMOGD:
     @pytest.mark.parametrize(
         "strict_rounding, variable, batch_size, expected_obj, expected_vars",
         [
-            (
-                True,
-                co.IntegerVariable(0, 24),
-                1,
-                200,
-                {"cores": 12},
-            ),  # can be improved by data normalizaiton or truning off strict_rounding.
+            (True, co.IntegerVariable(0, 24), 1, 200, {"cores": 12}),
+            # the strict rounding pulls the gradient descent back to integer value
+            # at the end of each iteration. So the variable might not be updated
+            # properly if the learning rate is not big enough.
+            # This can be improved by data normalization or disabling strict_rounding.
             (True, co.IntegerVariable(0, 24), 16, 150, {"cores": 16}),
             (True, co.FloatVariable(0, 24), 1, 148.17662, {"cores": 16.2}),
             (True, co.FloatVariable(0, 24), 16, 148.17662, {"cores": 16.2}),

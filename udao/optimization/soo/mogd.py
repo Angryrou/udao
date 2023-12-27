@@ -256,13 +256,12 @@ class MOGD(SOSolver):
         """
         # Compute objective, constraints and corresponding losses
 
-        (
-            sum_loss,
-            min_loss,
-            best_obj,
-            min_loss_id,
-            is_within_constraint,
-        ) = self._compute_loss(problem, input_data)
+        loss_meta = self._compute_loss(problem, input_data)
+        sum_loss = loss_meta["sum_loss"]
+        min_loss = loss_meta["min_loss"]
+        min_loss_id = loss_meta["min_loss_id"]
+        best_obj = loss_meta["best_obj"]
+        is_within_constraint = loss_meta["is_within_constraint"]
 
         optimizer.zero_grad()
         sum_loss.backward()  # type: ignore
@@ -380,35 +379,7 @@ class MOGD(SOSolver):
                 break
             i += 1
 
-        if best_iter is not None:
-            assert best_obj is not None and best_feature_input is not None
-            if not self.strict_rounding:
-                for k in best_feature_input:
-                    if isinstance(problem.variables[k], co.IntegerVariable):
-                        best_feature_input[k].data = best_feature_input[k].data.round()
-                _, best_loss, best_obj, _, is_within_constraint = self._compute_loss(
-                    problem,
-                    {
-                        "input_variables": best_feature_input,
-                        "input_parameters": input_parameter_values,
-                    },
-                )
-                if not is_within_constraint or not self.within_objective_bounds(
-                    best_obj, problem.objective
-                ):
-                    self._log_failure(problem, i)
-                    raise NoSolutionError
-            best_raw_vars = {
-                name: best_feature_input[name]
-                .cpu()
-                .numpy()
-                .squeeze()
-                .tolist()  # turn np.ndarray to float
-                for name in problem.variables
-            }
-            self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
-            return best_obj, best_raw_vars, best_loss
-        else:
+        if best_iter is None or best_obj is None or best_feature_input is None:
             self._log_failure(problem, i)
             raise NoSolutionError
 
@@ -549,51 +520,49 @@ class MOGD(SOSolver):
                 break
             i += 1
 
-        if best_iter is not None:
-            assert best_obj is not None and best_feature_input is not None
-            with th.no_grad():
-                best_feature_input = cast(th.Tensor, best_feature_input)
-                feature_container = make_tabular_container(best_feature_input)
-                best_raw_df = problem.data_processor.inverse_transform(
-                    feature_container, "tabular_features"
-                )
-                if not self.strict_rounding:
-                    best_raw_vars: Dict[str, Any] = {
-                        name: best_raw_df[[name]].values.round()[:, 0]
-                        if isinstance(variable, co.IntegerVariable)
-                        else best_raw_df[[name]].values[:, 0]
-                        for name, variable in problem.variables.items()
-                    }
-                    input_data_best_raw, _ = derive_processed_input(
-                        data_processor=problem.data_processor,
-                        input_parameters=problem.input_parameters or {},
-                        input_variables=best_raw_vars,
-                        device=self.device,
-                    )
-                    (
-                        _,
-                        best_loss,
-                        best_obj,
-                        _,
-                        is_within_constraint,
-                    ) = self._compute_loss(problem, input_data_best_raw)
-                    if not is_within_constraint or not self.within_objective_bounds(
-                        best_obj, problem.objective
-                    ):
-                        self._log_failure(problem, i)
-                        raise NoSolutionError
-                else:
-                    best_raw_vars = {
-                        name: best_raw_df[[name]]
-                        .values.squeeze()
-                        .tolist()  # turn np.ndarray to float
-                        for name in problem.variables
-                    }
-                self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
-                return best_obj, best_raw_vars, best_loss
-        else:
+        if best_iter is None or best_obj is None or best_feature_input is None:
             self._log_failure(problem, i)
             raise NoSolutionError
+
+        with th.no_grad():
+            best_feature_input = cast(th.Tensor, best_feature_input)
+            feature_container = make_tabular_container(best_feature_input)
+            best_raw_df = problem.data_processor.inverse_transform(
+                feature_container, "tabular_features"
+            )
+            if not self.strict_rounding:
+                best_raw_vars: Dict[str, Any] = {
+                    name: best_raw_df[[name]].values.round()[:, 0]
+                    if isinstance(variable, co.IntegerVariable)
+                    else best_raw_df[[name]].values[:, 0]
+                    for name, variable in problem.variables.items()
+                }
+                input_data_best_raw, _ = derive_processed_input(
+                    data_processor=problem.data_processor,
+                    input_parameters=problem.input_parameters or {},
+                    input_variables=best_raw_vars,
+                    device=self.device,
+                )
+                loss_meta = self._compute_loss(problem, input_data_best_raw)
+                best_loss = loss_meta["min_loss"]
+                best_obj = loss_meta["best_obj"]
+                is_within_constraint = loss_meta["is_within_constraint"]
+                if (
+                    best_obj is None
+                    or not is_within_constraint
+                    or not self.within_objective_bounds(best_obj, problem.objective)
+                ):
+                    self._log_failure(problem, i)
+                    raise NoSolutionError
+            else:
+                best_raw_vars = {
+                    name: best_raw_df[[name]]
+                    .values.squeeze()
+                    .tolist()  # turn np.ndarray to float
+                    for name in problem.variables
+                }
+            self._log_success(problem, i, best_obj, best_iter, best_raw_vars)
+            return best_obj, best_raw_vars, best_loss
 
     def _single_start_opt(
         self,
@@ -849,7 +818,7 @@ class MOGD(SOSolver):
 
     def _compute_loss(
         self, problem: co.SOProblem, input_data: Union[UdaoInput, List, Dict]
-    ) -> Tuple[th.Tensor, float, float, int, bool]:
+    ) -> Dict[str, Any]:
         obj_output = self._obj_forward(problem.objective, input_data)
         objective_loss = self.objective_loss(obj_output, problem.objective)
         constraint_loss = th.zeros_like(objective_loss, device=self.device)
@@ -862,18 +831,15 @@ class MOGD(SOSolver):
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
 
         loss = objective_loss + constraint_loss
-        sum_loss = th.sum(loss)
-        min_loss = th.min(loss).cpu().item()
         min_loss_id = int(th.argmin(loss).cpu().item())
-        best_obj = obj_output[min_loss_id].cpu().item()
 
-        return (
-            sum_loss,
-            min_loss,
-            best_obj,
-            min_loss_id,
-            bool((constraint_loss[min_loss_id] == 0).item()),
-        )
+        return {
+            "sum_loss": th.sum(loss),
+            "min_loss": th.min(loss).cpu().item(),
+            "min_loss_id": min_loss_id,
+            "best_obj": obj_output[min_loss_id].cpu().item(),
+            "is_within_constraint": bool((constraint_loss[min_loss_id] == 0).item()),
+        }
 
     ##################
     ## _get (vars)  ##
