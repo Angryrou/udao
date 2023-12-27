@@ -89,7 +89,7 @@ class SamplerSolver(SOSolver, ABC):
             input_variables=filtered_vars,
             device=self.device,
         )
-        objective_value = th_value.detach().numpy().reshape(-1, 1)
+        objective_value = th_value.detach().cpu().numpy().reshape(-1, 1)
         op_ind = int(np.argmin(objective_value * problem.objective.direction))
 
         return (
