@@ -120,6 +120,23 @@ class QueryStructureExtractor(TrainedExtractor[QueryStructureContainer]):
         ]
         return filtered_df_op_features, df_meta_features
 
+    def _extract_op_features_exploded(
+        self, df_op_features: pd.DataFrame
+    ) -> Tuple[pd.DataFrame, pd.Series]:
+        df_op_features_exploded = df_op_features.explode(
+            ["operation_id", "operation_gid"] + list(self.feature_types.keys()),
+            ignore_index=True,
+        )
+        df_op_features_exploded = df_op_features_exploded.set_index(
+            ["plan_id", "operation_id"]
+        )
+        df_op_features_exploded[
+            list(self.feature_types.keys())
+        ] = df_op_features_exploded[list(self.feature_types.keys())].astype("float32")
+        df_operation_types = df_op_features_exploded["operation_gid"].astype("int32")
+        del df_op_features_exploded["operation_gid"]
+        return df_op_features_exploded, df_operation_types
+
     def extract_features(
         self, df: pd.DataFrame, split: DatasetType
     ) -> QueryStructureContainer:
@@ -144,19 +161,10 @@ class QueryStructureExtractor(TrainedExtractor[QueryStructureContainer]):
         ).apply(pd.Series)
         df_op_features["plan_id"] = df["id"]
         df_op_features, df_meta_features = self._derive_meta_dataframe(df_op_features)
-        df_op_features_exploded = df_op_features.explode(
-            ["operation_id", "operation_gid"] + list(self.feature_types.keys()),
-            ignore_index=True,
-        )
-        df_op_features_exploded = df_op_features_exploded.set_index(
-            ["plan_id", "operation_id"]
-        )
-        df_op_features_exploded[
-            list(self.feature_types.keys())
-        ] = df_op_features_exploded[list(self.feature_types.keys())].astype("float32")
-        df_operation_types = df_op_features_exploded["operation_gid"].astype("int32")
-        del df_op_features_exploded["operation_gid"]
-
+        (
+            df_op_features_exploded,
+            df_operation_types,
+        ) = self._extract_op_features_exploded(df_op_features)
         return QueryStructureContainer(
             graph_features=df_op_features_exploded,
             template_plans=self.template_plans,

@@ -5,6 +5,16 @@ from typing import Callable, Dict, List, Tuple
 import pandas as pd
 
 
+def remove_unknown(s: str) -> str:
+    """Remove unknown symbol from a query plan
+    (in the form of (unknown))
+    """
+    pattern = r"\(unknown\)"
+    # Remove unknown operations
+    s = re.sub(pattern, "", s)
+    return s
+
+
 def remove_statistics(s: str) -> str:
     """Remove statistical information from a query plan
     (in the form of Statistics(...)
@@ -51,6 +61,7 @@ def prepare_operation(operation: str) -> str:
     """Prepare an operation for embedding by keeping only
     relevant semantic information"""
     processings: List[Callable[[str], str]] = [
+        remove_unknown,
         remove_statistics,
         remove_hashes,
         replace_symbols,
@@ -60,6 +71,17 @@ def prepare_operation(operation: str) -> str:
     for processing in processings:
         operation = processing(operation)
     return operation
+
+
+def build_unique_operations(df: pd.DataFrame) -> Tuple[Dict[int, List[int]], List[str]]:
+    """Build a dictionary of unique operations and their IDs"""
+    unique_ops: Dict[str, int] = defaultdict(lambda: len(unique_ops))
+    plan_to_ops: Dict[int, List[int]] = defaultdict(list)
+    for row in df.itertuples():
+        plan_to_ops[row.id].append(unique_ops[row.operation])
+
+    operations_list = list(unique_ops.keys())
+    return plan_to_ops, operations_list
 
 
 def extract_operations(
@@ -94,13 +116,4 @@ def extract_operations(
     )
     df = df.explode("plan", ignore_index=True)
     df.rename(columns={"plan": "operation"}, inplace=True)
-
-    # Build a dictionary of unique operations and their IDs
-    unique_ops: Dict[str, int] = defaultdict(lambda: len(unique_ops))
-    plan_to_ops: Dict[int, List[int]] = defaultdict(list)
-    for row in df.itertuples():
-        plan_to_ops[row.id].append(unique_ops[row.operation])
-
-    operations_list = list(unique_ops.keys())
-
-    return plan_to_ops, operations_list
+    return build_unique_operations(df)
