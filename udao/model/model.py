@@ -1,4 +1,4 @@
-from typing import Dict, Type
+from typing import Dict, Optional, Type
 
 import torch as th
 from torch import nn
@@ -24,7 +24,7 @@ class UdaoModel(nn.Module):
                 input_embedding_dim=embedder.embedding_size,
                 input_features_dim=len(iterator_shape.feature_names),
                 output_dim=len(iterator_shape.output_names),
-                **regressor_params
+                **regressor_params,
             ),
         )
         return cls(embedder, regressor)
@@ -35,7 +35,28 @@ class UdaoModel(nn.Module):
         self.embedder = embedder
         self.regressor = regressor
 
-    def forward(self, input_data: UdaoEmbedInput) -> th.Tensor:
-        embedding = self.embedder(input_data.embedding_input)
+    def forward(
+        self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
+    ) -> th.Tensor:
+        if embedding is None:
+            embedding = self.embedder(input_data.embedding_input)
         inst_feat = input_data.features
         return self.regressor(embedding, inst_feat)
+
+
+class FixedEmbeddingUdaoModel(th.nn.Module):
+    """
+    Assumes the embedding part does not change between inputs and caches
+    it after computing it once. This is relevant for an optimization pipeline
+    where the embedding input (e.g. a query plan) is a fixed parameter
+    """
+
+    def __init__(self, model: UdaoModel, embedding: Optional[th.Tensor] = None) -> None:
+        super().__init__()
+        self.model = model
+        self.embedding = embedding
+
+    def forward(self, input_data: UdaoEmbedInput) -> th.Tensor:
+        if self.embedding is None:
+            self.embedding = self.model.embedder(input_data.embedding_input)
+        return self.model(input_data, self.embedding)

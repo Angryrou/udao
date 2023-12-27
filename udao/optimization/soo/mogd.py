@@ -228,9 +228,11 @@ class MOGD(SOSolver):
         ----------
         problem : co.SOProblem
             Single-objective optimization problem
-        input_data : Any
+        input_data : Union[UdaoInput, Dict]
             Input data - can have different types depending on whether
-            the input variables are processed or not
+            the input variables are processed or not.
+            - UdaoInput: the naive input
+            - Dict: {"input_variables": ..., "input_parameters": ...}
 
         optimizer : th.optim.Optimizer
             PyTorch optimizer
@@ -460,7 +462,9 @@ class MOGD(SOSolver):
             input_data.features[:, grad_indices] = input_vars_subvector
             try:
                 min_loss_id, min_loss, local_best_obj = self._gradient_descent(
-                    problem, input_data, optimizer=optimizer
+                    problem,
+                    input_data,
+                    optimizer=optimizer,
                 )
             except UncompliantSolutionError:
                 pass
@@ -614,6 +618,7 @@ class MOGD(SOSolver):
             for name, variable in problem.variables.items()
             if isinstance(variable, co.NumericVariable)
         }
+
         meshed_categorical_vars = self.get_meshed_categorical_vars(problem.variables)
 
         if meshed_categorical_vars is None:
@@ -773,28 +778,33 @@ class MOGD(SOSolver):
             raise NotImplementedError("Objective with only one bound is not supported")
         return loss
 
+    def _obj_forward(
+        self,
+        optimization_element: co.Constraint,
+        input_data: Union[UdaoInput, Dict],
+    ) -> th.Tensor:
+        if isinstance(input_data, UdaoInput):
+            return optimization_element.function(input_data)  # type: ignore
+        else:
+            # Dict when unprocessed inputs
+            return optimization_element.function(**input_data)
+
     def _compute_loss(
         self, problem: co.SOProblem, input_data: Union[UdaoInput, Dict]
     ) -> Dict[str, Any]:
-        obj_output = (
-            problem.objective.function(input_data)  # type: ignore
-            if isinstance(input_data, UdaoInput)
-            else problem.objective.function(**input_data)
-        )
+        obj_output = self._obj_forward(problem.objective, input_data)
         objective_loss = self.objective_loss(obj_output, problem.objective)
         constraint_loss = th.zeros_like(objective_loss, device=self.device)
 
         if problem.constraints:
             const_outputs = [
-                constraint.function(input_data)  # type: ignore
-                if isinstance(input_data, UdaoInput)
-                else constraint.function(**input_data)
+                self._obj_forward(constraint, input_data)
                 for constraint in problem.constraints
             ]
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
 
         loss = objective_loss + constraint_loss
-        min_loss_id = (int(th.argmin(loss).cpu().item()),)
+        min_loss_id = int(th.argmin(loss).cpu().item())
 
         return {
             "sum_loss": th.sum(loss),
