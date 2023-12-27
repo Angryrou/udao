@@ -1,5 +1,6 @@
 import os
 import tarfile
+import time
 from pathlib import Path
 from typing import cast
 
@@ -39,6 +40,7 @@ def download_data() -> None:
     base_dir = Path(__file__).parent / "data"
 
     if os.path.exists(base_dir / "TPCH/brief.csv"):
+        logger.info("Data already downloaded")
         return
     logger.info("Downloading data")
     response = requests.get("https://www.lix.polytechnique.fr/~lyu/dataset/TPCH.tar.gz")
@@ -140,7 +142,7 @@ if __name__ == "__main__":
             model=model,
             objectives=["latency", "cost"],
         )
-        logger.info("found checkpointed model!")
+        logger.info("Found checkpointed model!")
     except BaseException:
         logger.info("model not found from checkpoints!")
         module = UdaoModule(
@@ -239,7 +241,7 @@ if __name__ == "__main__":
             learning_rate=1e-1,
             max_iters=100,
             patience=10,
-            multistart=10,
+            multistart=1,
             objective_stress=10,
         )
     )
@@ -247,9 +249,13 @@ if __name__ == "__main__":
         solver=so_solver,
         params=SequentialProgressiveFrontier.Params(),
     )
-
+    start_time = time.time()
     moo_objs, moo_vars = mo_solver.solve(problem)
-    logger.info(f"Found solution: {moo_objs}, {moo_vars}")
+    dt1 = time.time() - start_time
+    logger.info(f"Found solution: {moo_objs}, {moo_vars}, \ncost {dt1}s")
+
     so_problem = problem.derive_SO_problem(objective=problem.objectives[0])
+    start_time = time.time()
     soo_obj, soo_var = so_solver.solve(so_problem)
-    logger.info(f"Found solution: {soo_obj}, {soo_var}")
+    dt2 = time.time() - start_time
+    logger.info(f"Found solution: {soo_obj}, {soo_var}, \ncost {dt2}s")
