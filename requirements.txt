@@ -17,3 +17,5 @@ gensim==4.3.2
 matplotlib==3.8.1
 Platypus-Opt==1.1.0
 tensorboard==2.15.1
+types-requests==2.31.0.10
+requests==2.31.0

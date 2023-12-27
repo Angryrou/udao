@@ -58,7 +58,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies] # Optional
-dev = ["pre-commit==3.4.0"]
+dev = [
+  "pre-commit==3.4.0",
+  "types-requests==2.31.0.10",
+  "requests==2.31.0",
+]
 test = [
   "pytest==7.4.2",
   "pytest-cov==4.1.0",
