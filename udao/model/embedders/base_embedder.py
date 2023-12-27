@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from torch import nn
+
 from udao.utils.interfaces import UdaoEmbedItemShape
 
 

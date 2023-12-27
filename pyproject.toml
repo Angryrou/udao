@@ -2,12 +2,12 @@
 authors = [
   "Chenghao Lyu <chenghao@cs.umass.edu>",
   "Julien Fontanarava <julien.fontanarava@gmail.com>",
-] 
+]
 description = "" # Optional
-license = "MIT" 
+license = "MIT"
 maintainers = [
   "Chenghao Lyu <chenghao@cs.umass.edu>", # Optional
-] 
+]
 name = "udao" # Required
 readme = "README.md" # Optional
 version = "1.0.0" # Required
@@ -36,7 +36,10 @@ numpy = "1.26.1"
 pandas = "2.1.1"
 pandas-stubs = "2.1.1.230928"
 scikit-learn = "1.3.1"
-torch = "2.0.1"
+torch = [
+  {version = "2.1.1+cu118", source = "pytorch", markers = "sys_platform == 'linux'"},
+  {version = "2.1.1", source = "PyPI", markers = "sys_platform == 'darwin'"}
+]
 pytorch-warmup = "0.1.1"
 dgl= "1.1.3"
 lightning = "2.1.0"
@@ -46,6 +49,15 @@ matplotlib = "3.8.1"
 Platypus-Opt = "1.1.0"
 tensorboard = "2.15.1"
 
+
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "explicit"
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "7.4.2"
@@ -63,19 +75,6 @@ optional = true
 sphinx = "^7.0.0"
 chardet = "5.2.0"
 sphinx-book-theme = "*"
-
-[tool.poetry.group.gpu]
-optional = true
-
-[tool.poetry.group.gpu.dependencies]
-cuda-python = "11.8"
-dglgo = "0.0.2"
-torch = { url = "https://download.pytorch.org/whl/cu118", version = "2.0.1" }
-torchvision = { url = "https://download.pytorch.org/whl/cu118", version = "0.15.2" }
-torchaudio = { url = "https://download.pytorch.org/whl/cu118", version = "2.0.2" }
-dgl-cu118 = { url = "https://data.dgl.ai/wheels/cu118/repo.html"}
-
-
 
 
 [build-system]

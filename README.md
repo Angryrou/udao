@@ -63,7 +63,7 @@ pip install dglgo==0.0.2
 pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
 ```
 
-Alternatively, you can install the additional dependencies for the GPU version with Poetry (_before_ installing the package).
+Alternatively, you can install the additional dependencies for the GPU version with Poetry (`)
 
 ```
 poetry install --only gpu
@@ -73,3 +73,25 @@ poetry install --only gpu
 
 You can then follow the instructions above to install the package (either from PyPI or from source).
 ```
+
+## Contributing
+You can install the development dependencies using
+
+```
+poetry install --with dev
+```
+
+### Pre-commit hooks
+First install the pre-commit hooks with:
+
+```
+pre-commit install
+```
+
+You can then run the pre-commit hooks with:
+
+```
+pre-commit run --all-files
+```
+
+Pre-commits will run automatically before every commit.
