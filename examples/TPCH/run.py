@@ -1,9 +1,12 @@
+import os
+import tarfile
 from pathlib import Path
 from typing import cast
 
 import lightning.pytorch as pl
 import pandas as pd
 import pytorch_warmup as warmup
+import requests
 import torch as th
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import TensorBoardLogger
@@ -30,10 +33,27 @@ from udao.utils.interfaces import UdaoEmbedInput
 from udao.utils.logging import logger
 
 logger.setLevel("INFO")
+
+
+def download_data() -> None:
+    base_dir = Path(__file__).parent / "data"
+
+    if os.path.exists(base_dir / "TPCH/brief.csv"):
+        return
+    logger.info("Downloading data")
+    response = requests.get("https://www.lix.polytechnique.fr/~lyu/dataset/TPCH.tar.gz")
+    with open(base_dir / "TPCH.tar.gz", "wb") as f:
+        f.write(response.content)
+    with tarfile.open(base_dir / "TPCH.tar.gz", "r:gz") as tar:
+        tar.extractall(base_dir)
+    os.remove(base_dir / "TPCH.tar.gz")
+
+
 if __name__ == "__main__":
     tensor_dtypes = th.float32
     device = "gpu" if th.cuda.is_available() else "cpu"
     batch_size = 512
+    download_data()
 
     th.set_default_dtype(tensor_dtypes)  # type: ignore
     #### Data definition ####
@@ -66,8 +86,8 @@ if __name__ == "__main__":
     )
 
     base_dir = Path(__file__).parent
-    lqp_df = pd.read_csv(str(base_dir / "data/LQP.csv"))
-    brief_df = pd.read_csv(str(base_dir / "data/brief.csv"))
+    lqp_df = pd.read_csv(str(base_dir / "data/TPCH/LQP.csv"))
+    brief_df = pd.read_csv(str(base_dir / "data/TPCH/brief.csv"))
     cols_to_use = lqp_df.columns.difference(brief_df.columns)
 
     df = brief_df.merge(
