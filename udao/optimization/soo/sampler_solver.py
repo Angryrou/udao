@@ -2,13 +2,22 @@ from abc import ABC, abstractmethod
 from typing import Dict, Mapping, Optional, Tuple
 
 import numpy as np
+import torch as th
 
 from ..concepts import SOProblem, Variable
 from ..utils.exceptions import NoSolutionError
+from ..utils.moo_utils import get_default_device
 from .so_solver import SOSolver
 
 
 class SamplerSolver(SOSolver, ABC):
+    def __init__(
+        self,
+        device: Optional[th.device] = None,
+    ) -> None:
+        super().__init__()
+        self.device = device or get_default_device()
+
     @abstractmethod
     def _get_input(
         self, variables: Mapping[str, Variable], seed: Optional[int] = None
@@ -71,7 +80,9 @@ class SamplerSolver(SOSolver, ABC):
             raise NoSolutionError("No feasible solution found!")
 
         th_value = problem.apply_function(
-            optimization_element=problem.objective, input_variables=filtered_vars
+            optimization_element=problem.objective,
+            input_variables=filtered_vars,
+            device=self.device,
         )
         objective_value = th_value.detach().numpy().reshape(-1, 1)
         op_ind = int(np.argmin(objective_value * problem.objective.direction))

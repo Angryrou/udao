@@ -13,11 +13,8 @@ from ...utils.logging import logger
 from .. import concepts as co
 from ..concepts.utils import derive_processed_input, derive_unprocessed_input
 from ..utils.exceptions import NoSolutionError, UncompliantSolutionError
+from ..utils.moo_utils import get_default_device
 from .so_solver import SOSolver
-
-
-def get_default_device() -> th.device:
-    return th.device("cuda") if th.cuda.is_available() else th.device("cpu")
 
 
 class MOGD(SOSolver):

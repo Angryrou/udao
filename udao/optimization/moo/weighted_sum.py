@@ -165,7 +165,9 @@ class WeightedSum(MOSolver):
 
             objective_values = np.array(
                 [
-                    problem.apply_function(obj, soo_vars).cpu().numpy()
+                    problem.apply_function(obj, soo_vars, device=self.device)
+                    .cpu()
+                    .numpy()
                     for obj in problem.objectives
                 ]
             ).T.squeeze()
