@@ -12,9 +12,11 @@ from .so_solver import SOSolver
 class SamplerSolver(SOSolver, ABC):
     def __init__(
         self,
+        device: Optional[th.device] = None,
     ) -> None:
         super().__init__()
-        self.device = th.device("cpu")
+
+        self.device = device or th.device("cpu")
 
     @abstractmethod
     def _get_input(

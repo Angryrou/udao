@@ -35,7 +35,6 @@ class TestWeightedSum:
             WeightedSum.Params(
                 so_solver=inner_solver,
                 ws_pairs=ws_pairs,
-                device=th.device("cpu"),
             )
         )
         po_objs, po_vars = ws_algo.solve(problem=simple_problem, seed=0)
@@ -129,7 +128,6 @@ class TestWeightedSum:
                 so_solver=inner_solver,
                 ws_pairs=ws_pairs,
                 normalize=False,
-                device=th.device("cpu"),
             )
         )
         po_objs, po_vars = ws_algo.solve(problem=two_obj_problem, seed=0)
@@ -164,7 +162,6 @@ class TestWeightedSum:
                 so_solver=inner_solver,
                 ws_pairs=ws_pairs,
                 allow_cache=True,
-                device=th.device("cpu"),
             )
         )
         po_objs, po_vars = ws_algo.solve(problem=two_obj_problem, seed=0)
@@ -197,7 +194,6 @@ class TestWeightedSum:
             WeightedSum.Params(
                 so_solver=inner_solver,
                 ws_pairs=ws_pairs,
-                device=th.device("cpu"),
             )
         )
         with pytest.raises(NoSolutionError):
@@ -237,7 +233,6 @@ class TestWeightedSum:
             WeightedSum.Params(
                 so_solver=inner_solver,
                 ws_pairs=ws_pairs,
-                device=th.device("cpu"),
             )
         )
         po_objs, po_vars = ws_algo.solve(problem=simple_problem, seed=0)
