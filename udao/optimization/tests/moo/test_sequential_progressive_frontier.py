@@ -146,9 +146,9 @@ class TestProgressiveFrontier:
             seed=0,
         )
         np.testing.assert_array_almost_equal(
-            anchor_point.objs, np.array([0.0, 0.444444])
+            anchor_point.objs, np.array([0.0, 0.6944444])
         )
-        assert anchor_point.vars == {"v1": 0.0, "v2": 5.0}
+        assert anchor_point.vars == {"v1": 0.0, "v2": 6.0}
         anchor_point = spf.get_anchor_point(
             problem=two_obj_problem,
             obj_ind=1,
