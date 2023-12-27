@@ -6,17 +6,15 @@ import torch as th
 
 from ..concepts import SOProblem, Variable
 from ..utils.exceptions import NoSolutionError
-from ..utils.moo_utils import get_default_device
 from .so_solver import SOSolver
 
 
 class SamplerSolver(SOSolver, ABC):
     def __init__(
         self,
-        device: Optional[th.device] = None,
     ) -> None:
         super().__init__()
-        self.device = device or get_default_device()
+        self.device = th.device("cpu")
 
     @abstractmethod
     def _get_input(

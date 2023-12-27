@@ -1,11 +1,9 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, Mapping, Optional
 
 import numpy as np
-import torch as th
 
 from ..concepts import EnumVariable, FloatVariable, IntegerVariable, Variable
-from ..utils.moo_utils import get_default_device
 from .sampler_solver import SamplerSolver
 
 
@@ -16,11 +14,9 @@ class RandomSamplerSolver(SamplerSolver):
     class Params:
         n_samples_per_param: int
         "the number of samples per variable"
-        device: Optional[th.device] = field(default_factory=get_default_device)
-        """device on which to perform torch operations, by default available device."""
 
     def __init__(self, params: Params) -> None:
-        super().__init__(device=params.device)
+        super().__init__()
         self.n_samples_per_param = params.n_samples_per_param
 
     def _process_variable(
