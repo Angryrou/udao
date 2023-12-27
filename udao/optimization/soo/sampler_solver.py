@@ -95,8 +95,8 @@ class SamplerSolver(SOSolver, ABC):
             {k: v[op_ind] for k, v in filtered_vars.items()},
         )
 
-    @staticmethod
     def filter_on_constraints(
+        self,
         input_vars: Dict[str, np.ndarray],
         problem: SOProblem,
     ) -> Dict[str, np.ndarray]:
@@ -116,14 +116,16 @@ class SamplerSolver(SOSolver, ABC):
 
         available_indices = np.arange(len(next(iter(input_vars.values()))))
         for constraint in problem.constraints:
-            const_values = problem.apply_function(constraint, input_vars)
+            const_values = problem.apply_function(
+                constraint, input_vars, device=self.device
+            )
             if constraint.upper is not None:
                 available_indices = np.intersect1d(
-                    available_indices, np.where(const_values <= constraint.upper)
+                    available_indices, np.where(const_values.cpu() <= constraint.upper)
                 )
             if constraint.lower is not None:
                 available_indices = np.intersect1d(
-                    available_indices, np.where(const_values >= constraint.lower)
+                    available_indices, np.where(const_values.cpu() >= constraint.lower)
                 )
         filtered_vars = {k: v[available_indices] for k, v in input_vars.items()}
         return filtered_vars
