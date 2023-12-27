@@ -69,6 +69,11 @@ class SamplerSolver(SOSolver, ABC):
         NoSolutionError
             If no feasible solution is found
         """
+        if self.device:
+            for constraint in problem.constraints:
+                constraint.to(self.device)
+            problem.objective.to(self.device)
+
         if problem.constraints is None:
             pass
         variable_values = self._get_input(problem.variables, seed=seed)

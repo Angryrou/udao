@@ -86,6 +86,19 @@ class WeightedSumObjective(Objective):
             return th.zeros_like(objs_array)
         return (objs_array - objs_min) / (objs_max - objs_min)
 
+    def to(self, device: Optional[th.device] = None) -> "WeightedSumObjective":
+        """Move objective to device"""
+        if device is None:
+            device = get_default_device()
+
+        self.device = device
+        for objective in self.problem.objectives:
+            objective.to(device)
+        for constraint in self.problem.constraints:
+            constraint.to(device)
+        self._cache = {k: v.to(device) for k, v in self._cache.items()}
+        return self
+
 
 class WeightedSum(MOSolver):
     """
