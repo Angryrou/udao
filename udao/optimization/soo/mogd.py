@@ -386,7 +386,7 @@ class MOGD(SOSolver):
                         "input_parameters": input_parameter_values,
                     },
                 )
-                best_loss = loss_meta["best_loss"]
+                best_loss = loss_meta["min_loss"]
                 best_obj = loss_meta["best_obj"]
                 is_within_constraint = loss_meta["is_within_constraint"]
                 assert best_obj is not None
@@ -531,7 +531,7 @@ class MOGD(SOSolver):
                         device=self.device,
                     )
                     loss_meta = self._compute_loss(problem, input_data_best_raw)
-                    best_loss = loss_meta["best_loss"]
+                    best_loss = loss_meta["min_loss"]
                     best_obj = loss_meta["best_obj"]
                     is_within_constraint = loss_meta["is_within_constraint"]
                     assert best_obj is not None
