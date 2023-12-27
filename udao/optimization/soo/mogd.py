@@ -249,13 +249,12 @@ class MOGD(SOSolver):
         """
         # Compute objective, constraints and corresponding losses
 
-        (
-            sum_loss,
-            min_loss,
-            best_obj,
-            min_loss_id,
-            is_within_constraint,
-        ) = self._compute_loss(problem, input_data)
+        loss_meta = self._compute_loss(problem, input_data)
+        sum_loss = loss_meta["sum_loss"]
+        min_loss = loss_meta["min_loss"]
+        min_loss_id = loss_meta["min_loss_id"]
+        best_obj = loss_meta["best_obj"]
+        is_within_constraint = loss_meta["is_within_constraint"]
 
         optimizer.zero_grad()
         sum_loss.backward()  # type: ignore
@@ -375,17 +374,22 @@ class MOGD(SOSolver):
 
         if best_iter is not None:
             assert best_obj is not None and best_feature_input is not None
+
             if not self.strict_rounding:
                 for k in best_feature_input:
                     if isinstance(problem.variables[k], co.IntegerVariable):
                         best_feature_input[k].data = best_feature_input[k].data.round()
-                _, best_loss, best_obj, _, is_within_constraint = self._compute_loss(
+                loss_meta = self._compute_loss(
                     problem,
                     {
                         "input_variables": best_feature_input,
                         "input_parameters": input_parameter_values,
                     },
                 )
+                best_loss = loss_meta["best_loss"]
+                best_obj = loss_meta["best_obj"]
+                is_within_constraint = loss_meta["is_within_constraint"]
+                assert best_obj is not None
                 if not is_within_constraint or not self.within_objective_bounds(
                     best_obj, problem.objective
                 ):
@@ -526,13 +530,11 @@ class MOGD(SOSolver):
                         input_variables=best_raw_vars,
                         device=self.device,
                     )
-                    (
-                        _,
-                        best_loss,
-                        best_obj,
-                        _,
-                        is_within_constraint,
-                    ) = self._compute_loss(problem, input_data_best_raw)
+                    loss_meta = self._compute_loss(problem, input_data_best_raw)
+                    best_loss = loss_meta["best_loss"]
+                    best_obj = loss_meta["best_obj"]
+                    is_within_constraint = loss_meta["is_within_constraint"]
+                    assert best_obj is not None
                     if not is_within_constraint or not self.within_objective_bounds(
                         best_obj, problem.objective
                     ):
@@ -773,7 +775,7 @@ class MOGD(SOSolver):
 
     def _compute_loss(
         self, problem: co.SOProblem, input_data: Union[UdaoInput, Dict]
-    ) -> Tuple[th.Tensor, float, float, int, bool]:
+    ) -> Dict[str, Any]:
         obj_output = (
             problem.objective.function(input_data)  # type: ignore
             if isinstance(input_data, UdaoInput)
@@ -792,18 +794,15 @@ class MOGD(SOSolver):
             constraint_loss = self.constraints_loss(const_outputs, problem.constraints)
 
         loss = objective_loss + constraint_loss
-        sum_loss = th.sum(loss)
-        min_loss = th.min(loss).cpu().item()
-        min_loss_id = int(th.argmin(loss).cpu().item())
-        best_obj = obj_output[min_loss_id].cpu().item()
+        min_loss_id = (int(th.argmin(loss).cpu().item()),)
 
-        return (
-            sum_loss,
-            min_loss,
-            best_obj,
-            min_loss_id,
-            bool((constraint_loss[min_loss_id] == 0).item()),
-        )
+        return {
+            "sum_loss": th.sum(loss),
+            "min_loss": th.min(loss).cpu().item(),
+            "min_loss_id": min_loss_id,
+            "best_obj": obj_output[min_loss_id].cpu().item(),
+            "is_within_constraint": bool((constraint_loss[min_loss_id] == 0).item()),
+        }
 
     ##################
     ## _get (vars)  ##
