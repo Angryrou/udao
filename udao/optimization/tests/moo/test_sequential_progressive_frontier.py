@@ -2,6 +2,7 @@ from typing import cast
 
 import numpy as np
 import pytest
+import torch as th
 
 from ....model.utils.utils import set_deterministic_torch
 from ....utils.interfaces import VarTypes
@@ -102,11 +103,46 @@ class TestProgressiveFrontier:
         np.testing.assert_array_equal(objectives, np.array([[0, 0]]))
         assert variables[0] == {"v1": 0.0, "v2": 1.0}
 
+    def test_solve_gpu(
+        self,
+        spf: SequentialProgressiveFrontier,
+        two_obj_problem: MOProblem,
+    ) -> None:
+        if not th.cuda.is_available():
+            pytest.skip("Skip GPU test")
+        cast(MOGD, spf.solver).device = th.device("cuda")
+        cast(MOGD, spf.solver).patience = 100
+        objectives, variables = spf.solve(
+            problem=two_obj_problem,
+            seed=0,
+        )
+        assert objectives is not None
+        np.testing.assert_array_equal(objectives, np.array([[0, 0]]))
+        assert variables[0] == {"v1": 0.0, "v2": 1.0}
+
     def test_solve_non_processed_problem(
         self,
         spf: SequentialProgressiveFrontier,
         simple_problem: MOProblem,
     ) -> None:
+        cast(MOGD, spf.solver).patience = 100
+        objectives, variables = spf.solve(
+            problem=simple_problem,
+            seed=0,
+        )
+        assert objectives is not None
+        np.testing.assert_array_almost_equal(objectives, np.array([[1, 1.3]]))
+        assert variables[0] == {"v1": 0.0, "v2": 3.0}
+
+    def test_solve_non_processed_problem_gpu(
+        self,
+        spf: SequentialProgressiveFrontier,
+        simple_problem: MOProblem,
+    ) -> None:
+        if not th.cuda.is_available():
+            pytest.skip("Skip GPU test")
+
+        cast(MOGD, spf.solver).device = th.device("cuda")
         cast(MOGD, spf.solver).patience = 100
         objectives, variables = spf.solve(
             problem=simple_problem,

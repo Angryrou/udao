@@ -118,16 +118,20 @@ class SamplerSolver(SOSolver, ABC):
 
         available_indices = np.arange(len(next(iter(input_vars.values()))))
         for constraint in problem.constraints:
-            const_values = problem.apply_function(
-                constraint, input_vars, device=self.device
+            const_values = (
+                problem.apply_function(constraint, input_vars, device=self.device)
+                .detach()
+                .cpu()
+                .numpy()
             )
+
             if constraint.upper is not None:
                 available_indices = np.intersect1d(
-                    available_indices, np.where(const_values.cpu() <= constraint.upper)
+                    available_indices, np.where(const_values <= constraint.upper)
                 )
             if constraint.lower is not None:
                 available_indices = np.intersect1d(
-                    available_indices, np.where(const_values.cpu() >= constraint.lower)
+                    available_indices, np.where(const_values >= constraint.lower)
                 )
         filtered_vars = {k: v[available_indices] for k, v in input_vars.items()}
         return filtered_vars
