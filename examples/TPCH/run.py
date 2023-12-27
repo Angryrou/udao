@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 import lightning.pytorch as pl
 import pandas as pd
@@ -18,7 +18,7 @@ from udao.data.iterators.query_plan_iterator import QueryPlanIterator
 from udao.data.predicate_embedders import Word2VecEmbedder, Word2VecParams
 from udao.data.preprocessors.normalize_preprocessor import NormalizePreprocessor
 from udao.model.embedders.graph_averager import GraphAverager
-from udao.model.model import DerivedUdaoModel, UdaoModel
+from udao.model.model import FixedEmbeddingUdaoModel, UdaoModel
 from udao.model.module import LearningParams, UdaoModule
 from udao.model.regressors.mlp import MLP
 from udao.model.utils.losses import WMAPELoss
@@ -183,17 +183,13 @@ if __name__ == "__main__":
         "m8": 846.0800000000002,
     }
 
-    class latency(DerivedUdaoModel):
-        def forward(
-            self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
-        ) -> th.Tensor:
-            return super().forward(input_data, embedding)[:, 0].reshape(-1, 1)
+    class latency(FixedEmbeddingUdaoModel):
+        def forward(self, input_data: UdaoEmbedInput) -> th.Tensor:
+            return super().forward(input_data)[:, 0].reshape(-1, 1)
 
-    class cloud_cost(DerivedUdaoModel):
-        def forward(
-            self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
-        ) -> th.Tensor:
-            return super().forward(input_data, embedding)[:, 1].reshape(-1, 1)
+    class cloud_cost(FixedEmbeddingUdaoModel):
+        def forward(self, input_data: UdaoEmbedInput) -> th.Tensor:
+            return super().forward(input_data)[:, 1].reshape(-1, 1)
 
     problem = concepts.MOProblem(
         data_processor=data_processor,

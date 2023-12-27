@@ -44,12 +44,13 @@ class UdaoModel(nn.Module):
         return self.regressor(embedding, inst_feat)
 
 
-class DerivedUdaoModel(th.nn.Module):
-    def __init__(self, model: UdaoModel) -> None:
+class FixedEmbeddingUdaoModel(th.nn.Module):
+    def __init__(self, model: UdaoModel, embedding: Optional[th.Tensor] = None) -> None:
         super().__init__()
         self.model = model
+        self.embedding = embedding
 
-    def forward(
-        self, input_data: UdaoEmbedInput, embedding: Optional[th.Tensor] = None
-    ) -> th.Tensor:
-        return self.model(input_data, embedding)
+    def forward(self, input_data: UdaoEmbedInput) -> th.Tensor:
+        if self.embedding is None:
+            self.embedding = self.model.embedder(input_data.embedding_input)
+        return self.model(input_data, self.embedding)

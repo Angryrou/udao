@@ -1,5 +1,5 @@
 from .embedders import BaseEmbedder, BaseGraphEmbedder, GraphAverager, GraphTransformer
-from .model import DerivedUdaoModel, UdaoModel
+from .model import FixedEmbeddingUdaoModel, UdaoModel
 from .module import UdaoModule
 from .regressors import MLP, BaseRegressor
 from .utils import losses, metrics, schedulers, utils
@@ -12,7 +12,7 @@ __all__ = [
     "GraphTransformer",
     "MLP",
     "UdaoModel",
-    "DerivedUdaoModel",
+    "FixedEmbeddingUdaoModel",
     "UdaoModule",
     "losses",
     "metrics",
