@@ -8,7 +8,7 @@ import torch.optim as optim
 from ...data.containers.tabular_container import TabularContainer
 from ...data.handler.data_processor import DataProcessor
 from ...data.iterators.base_iterator import UdaoIterator
-from ...utils.interfaces import UdaoEmbedInput, UdaoInput, UdaoItemShape
+from ...utils.interfaces import UdaoInput, UdaoItemShape
 from ...utils.logging import logger
 from .. import concepts as co
 from ..concepts.utils import derive_processed_input, derive_unprocessed_input
@@ -228,11 +228,10 @@ class MOGD(SOSolver):
         ----------
         problem : co.SOProblem
             Single-objective optimization problem
-        input_data : Union[UdaoInput, List, Dict]
+        input_data : Union[UdaoInput, Dict]
             Input data - can have different types depending on whether
             the input variables are processed or not.
             - UdaoInput: the naive input
-            - List: [UdaoEmbedInput, embedding: th.Tensor]
             - Dict: {"input_variables": ..., "input_parameters": ...}
 
         optimizer : th.optim.Optimizer
@@ -464,9 +463,7 @@ class MOGD(SOSolver):
             try:
                 min_loss_id, min_loss, local_best_obj = self._gradient_descent(
                     problem,
-                    input_data
-                    if isinstance(input_data, UdaoEmbedInput)
-                    else input_data,
+                    input_data,
                     optimizer=optimizer,
                 )
             except UncompliantSolutionError:

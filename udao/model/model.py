@@ -45,6 +45,12 @@ class UdaoModel(nn.Module):
 
 
 class FixedEmbeddingUdaoModel(th.nn.Module):
+    """
+    Assumes the embedding part does not change between inputs and caches
+    it after computing it once. This is relevant for an optimization pipeline
+    where the embedding input (e.g. a query plan) is a fixed parameter
+    """
+
     def __init__(self, model: UdaoModel, embedding: Optional[th.Tensor] = None) -> None:
         super().__init__()
         self.model = model
