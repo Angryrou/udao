@@ -60,6 +60,7 @@ class BaseProblem:
             input_vars, input_params = derive_unprocessed_input(
                 input_variables,
                 self.input_parameters,
+                device=device,
             )
             th_value = optimization_element(
                 input_parameters=input_params,

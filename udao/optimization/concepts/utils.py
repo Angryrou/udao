@@ -8,6 +8,7 @@ from ...data.extractors.tabular_extractor import TabularFeatureExtractor
 from ...data.handler.data_processor import DataProcessor
 from ...data.iterators.base_iterator import BaseIterator, UdaoIterator
 from ...utils.interfaces import UdaoInput
+from ..utils.moo_utils import get_default_device
 
 InputVariables = Union[Dict[str, np.ndarray], Dict[str, Any]]
 InputParameters = Optional[Dict[str, Any]]
@@ -129,6 +130,8 @@ def derive_unprocessed_input(
         the input data for the model,
         with the variables inputs as tensors and the non-decision inputs as values
     """
+    device = device or get_default_device()
+
     variable_sample = input_variables[list(input_variables.keys())[0]]
     if isinstance(variable_sample, np.ndarray):
         n_items = len(variable_sample)
@@ -136,7 +139,8 @@ def derive_unprocessed_input(
         n_items = 1
         input_variables = {k: np.array([v]) for k, v in input_variables.items()}
     input_parameters_values = {
-        k: th.tensor([v] * n_items) for k, v in (input_parameters or {}).items()
+        k: th.tensor([v] * n_items).to(device)
+        for k, v in (input_parameters or {}).items()
     }
     return {
         name: th.tensor(value, device=device).float()
@@ -168,6 +172,7 @@ def derive_processed_input(
         - The batch input for the model
         - The iterator used to generate the batch input
     """
+    device = device or get_default_device()
     variable_sample = input_variables[list(input_variables.keys())[0]]
     if isinstance(variable_sample, np.ndarray):
         n_items = len(input_variables[list(input_variables.keys())[0]])

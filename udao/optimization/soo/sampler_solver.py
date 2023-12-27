@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Mapping, Optional, Tuple
 
 import numpy as np
+import torch as th
 
 from ..concepts import SOProblem, Variable
 from ..utils.exceptions import NoSolutionError
@@ -9,6 +10,14 @@ from .so_solver import SOSolver
 
 
 class SamplerSolver(SOSolver, ABC):
+    def __init__(
+        self,
+        device: Optional[th.device] = None,
+    ) -> None:
+        super().__init__()
+
+        self.device = device or th.device("cpu")
+
     @abstractmethod
     def _get_input(
         self, variables: Mapping[str, Variable], seed: Optional[int] = None
@@ -60,6 +69,11 @@ class SamplerSolver(SOSolver, ABC):
         NoSolutionError
             If no feasible solution is found
         """
+        if self.device:
+            for constraint in problem.constraints:
+                constraint.to(self.device)
+            problem.objective.to(self.device)
+
         if problem.constraints is None:
             pass
         variable_values = self._get_input(problem.variables, seed=seed)
@@ -71,9 +85,11 @@ class SamplerSolver(SOSolver, ABC):
             raise NoSolutionError("No feasible solution found!")
 
         th_value = problem.apply_function(
-            optimization_element=problem.objective, input_variables=filtered_vars
+            optimization_element=problem.objective,
+            input_variables=filtered_vars,
+            device=self.device,
         )
-        objective_value = th_value.detach().numpy().reshape(-1, 1)
+        objective_value = th_value.detach().cpu().numpy().reshape(-1, 1)
         op_ind = int(np.argmin(objective_value * problem.objective.direction))
 
         return (
@@ -81,8 +97,8 @@ class SamplerSolver(SOSolver, ABC):
             {k: v[op_ind] for k, v in filtered_vars.items()},
         )
 
-    @staticmethod
     def filter_on_constraints(
+        self,
         input_vars: Dict[str, np.ndarray],
         problem: SOProblem,
     ) -> Dict[str, np.ndarray]:
@@ -102,7 +118,13 @@ class SamplerSolver(SOSolver, ABC):
 
         available_indices = np.arange(len(next(iter(input_vars.values()))))
         for constraint in problem.constraints:
-            const_values = problem.apply_function(constraint, input_vars)
+            const_values = (
+                problem.apply_function(constraint, input_vars, device=self.device)
+                .detach()
+                .cpu()
+                .numpy()
+            )
+
             if constraint.upper is not None:
                 available_indices = np.intersect1d(
                     available_indices, np.where(const_values <= constraint.upper)

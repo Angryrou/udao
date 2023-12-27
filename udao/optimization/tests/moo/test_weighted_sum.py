@@ -32,8 +32,10 @@ class TestWeightedSum:
         simple_problem.input_parameters = None
 
         ws_algo = WeightedSum(
-            so_solver=inner_solver,
-            ws_pairs=ws_pairs,
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=simple_problem, seed=0)
         np.testing.assert_array_almost_equal(po_objs, np.array([[0, 0.2]]))
@@ -53,8 +55,10 @@ class TestWeightedSum:
         ws_pairs = np.array([[0.3, 0.7], [0.6, 0.4]])
 
         ws_algo = WeightedSum(
-            so_solver=inner_solver,
-            ws_pairs=ws_pairs,
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=simple_problem, seed=0)
 
@@ -83,8 +87,10 @@ class TestWeightedSum:
         )
 
         ws_algo = WeightedSum(
-            so_solver=inner_solver,
-            ws_pairs=ws_pairs,
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=two_obj_problem, seed=0)
 
@@ -116,7 +122,11 @@ class TestWeightedSum:
         ws_pairs = even_weights(0.1, 2)
         logger.debug(f"ws_pairs: {ws_pairs}")
         ws_algo = WeightedSum(
-            so_solver=inner_solver, ws_pairs=ws_pairs, normalize=False  # type: ignore
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+                normalize=False,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=two_obj_problem, seed=0)
 
@@ -146,7 +156,11 @@ class TestWeightedSum:
         )
 
         ws_algo = WeightedSum(
-            so_solver=inner_solver, ws_pairs=ws_pairs, allow_cache=True
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+                allow_cache=True,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=two_obj_problem, seed=0)
 
@@ -175,8 +189,10 @@ class TestWeightedSum:
         simple_problem.constraints = [Constraint(function=f3, lower=0)]
         simple_problem.input_parameters = None
         ws_algo = WeightedSum(
-            so_solver=inner_solver,
-            ws_pairs=ws_pairs,
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+            )
         )
         with pytest.raises(NoSolutionError):
             ws_algo.solve(problem=simple_problem, seed=0)
@@ -212,8 +228,10 @@ class TestWeightedSum:
 
         simple_problem.constraints = [Constraint(function=constraint_f, lower=0)]
         ws_algo = WeightedSum(
-            so_solver=inner_solver,
-            ws_pairs=ws_pairs,
+            WeightedSum.Params(
+                so_solver=inner_solver,
+                ws_pairs=ws_pairs,
+            )
         )
         po_objs, po_vars = ws_algo.solve(problem=simple_problem, seed=0)
 

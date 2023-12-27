@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -10,7 +11,7 @@ from ..soo.mogd import MOGD
 from ..soo.so_solver import SOSolver
 from ..utils import moo_utils as moo_ut
 from ..utils.exceptions import NoSolutionError
-from ..utils.moo_utils import Point
+from ..utils.moo_utils import Point, get_default_device
 from .mo_solver import MOSolver
 
 
@@ -23,7 +24,9 @@ class WeightedSumObjective(Objective):
         ws: List[float],
         allow_cache: bool = False,
         normalize: bool = True,
+        device: Optional[th.device] = None,
     ) -> None:
+        self.device = device or get_default_device()
         self.problem = problem
         self.ws = ws
         super().__init__(name="weighted_sum", function=self.function, minimize=True)
@@ -52,7 +55,7 @@ class WeightedSumObjective(Objective):
         objs_tensor = self._function(*args, **kwargs)
         if self.normalize:
             objs_tensor = self._normalize_objective(objs_tensor)
-        return th.sum(objs_tensor * th.tensor(self.ws), dim=1)
+        return th.sum(objs_tensor * th.tensor(self.ws, device=self.device), dim=1)
 
     def _normalize_objective(self, objs_array: th.Tensor) -> th.Tensor:
         """Normalize objective values to [0, 1]
@@ -83,6 +86,19 @@ class WeightedSumObjective(Objective):
             return th.zeros_like(objs_array)
         return (objs_array - objs_min) / (objs_max - objs_min)
 
+    def to(self, device: Optional[th.device] = None) -> "WeightedSumObjective":
+        """Move objective to device"""
+        if device is None:
+            device = get_default_device()
+
+        self.device = device
+        for objective in self.problem.objectives:
+            objective.to(device)
+        for constraint in self.problem.constraints:
+            constraint.to(device)
+        self._cache = {k: v.to(device) for k, v in self._cache.items()}
+        return self
+
 
 class WeightedSum(MOSolver):
     """
@@ -101,19 +117,31 @@ class WeightedSum(MOSolver):
 
     """
 
+    @dataclass
+    class Params:
+        ws_pairs: np.ndarray
+        """weight sets for all objectives, of shape (n_weights, n_objs)"""
+        so_solver: SOSolver
+        """solver for SOO"""
+        normalize: bool = True
+        """whether to normalize objective values to [0, 1] before applying WS"""
+        allow_cache: bool = False
+        """whether to cache the objective values"""
+        device: Optional[th.device] = field(default_factory=get_default_device)
+        """device on which to perform torch operations, by default available device."""
+
     def __init__(
         self,
-        ws_pairs: np.ndarray,
-        so_solver: SOSolver,
-        allow_cache: bool = False,
-        normalize: bool = True,
+        params: Params,
     ):
         super().__init__()
-        self.so_solver = so_solver
-        self.ws_pairs = ws_pairs
-        self.allow_cache = allow_cache
-        self.normalize = normalize
-        if self.allow_cache and isinstance(so_solver, MOGD):
+        self.so_solver = params.so_solver
+        self.ws_pairs = params.ws_pairs
+        self.allow_cache = params.allow_cache
+        self.normalize = params.normalize
+        self.device = params.device
+
+        if self.allow_cache and isinstance(params.so_solver, MOGD):
             raise NotImplementedError(
                 "MOGD does not support caching." "Please set allow_cache=False."
             )
@@ -138,7 +166,7 @@ class WeightedSum(MOSolver):
         """
         candidate_points: List[Point] = []
         objective = WeightedSumObjective(
-            problem, self.ws_pairs[0], self.allow_cache, self.normalize
+            problem, self.ws_pairs[0], self.allow_cache, self.normalize, self.device
         )
         so_problem = problem.derive_SO_problem(objective)
         for i, ws in enumerate(self.ws_pairs):
@@ -150,7 +178,9 @@ class WeightedSum(MOSolver):
 
             objective_values = np.array(
                 [
-                    problem.apply_function(obj, soo_vars).cpu().numpy()
+                    problem.apply_function(obj, soo_vars, device=self.device)
+                    .cpu()
+                    .numpy()
                     for obj in problem.objectives
                 ]
             ).T.squeeze()

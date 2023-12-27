@@ -1,10 +1,12 @@
 import itertools
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Mapping, Optional
 
 import numpy as np
+import torch as th
 
 from ..concepts import EnumVariable, IntegerVariable, NumericVariable, Variable
+from ..utils.moo_utils import get_default_device
 from .sampler_solver import SamplerSolver
 
 
@@ -15,13 +17,15 @@ class GridSearchSolver(SamplerSolver):
     class Params:
         n_grids_per_var: List[int]
         """List of grid sizes for each variable"""
+        device: Optional[th.device] = field(default_factory=get_default_device)
+        """device on which to perform torch operations, by default available device."""
 
-    def __init__(self, gs_params: Params) -> None:
+    def __init__(self, params: Params) -> None:
         """
         :param gs_params: dict, the parameters used in grid_search
         """
-        super().__init__()
-        self.n_grids_per_var = gs_params.n_grids_per_var
+        super().__init__(params.device)
+        self.n_grids_per_var = params.n_grids_per_var
 
     def _process_variable(self, var: Variable, n_grids: int) -> np.ndarray:
         """Define grid point in fonction of the variable type"""
