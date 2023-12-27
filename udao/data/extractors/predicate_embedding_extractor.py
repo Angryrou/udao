@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Dict, List, Tuple
 
 import pandas as pd
 
@@ -22,9 +22,13 @@ class PredicateEmbeddingExtractor(TrainedExtractor[TabularContainer]):
         self,
         embedder: BasePredicateEmbedder,
         op_preprocessing: Callable[[str], str] = prepare_operation,
+        extract_operations: Callable[
+            [pd.DataFrame, Callable], Tuple[Dict[int, List[int]], List[str]]
+        ] = extract_operations,
     ) -> None:
         self.embedder = embedder
         self.op_preprocessing = op_preprocessing
+        self.extract_operations = extract_operations
 
     def extract_features(self, df: pd.DataFrame, split: str) -> TabularContainer:
         """Extract embeddings from a DataFrame of query plans.
@@ -43,7 +47,7 @@ class PredicateEmbeddingExtractor(TrainedExtractor[TabularContainer]):
             DataFrame containing the embeddings of each operation of the query plans.
         """
 
-        plan_to_operations, operations_list = extract_operations(
+        plan_to_operations, operations_list = self.extract_operations(
             df, self.op_preprocessing
         )
         if split == "train":
