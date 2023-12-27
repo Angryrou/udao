@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Sequence, Tuple
 
 import numpy as np
+import torch as th
 from matplotlib import pyplot as plt
 
 from .exceptions import NoSolutionError
@@ -251,3 +252,7 @@ def plot_po(po: np.ndarray, n_obj: int = 2, title: str = "pf_ap") -> None:
 
     plt.tight_layout()
     plt.show()
+
+
+def get_default_device() -> th.device:
+    return th.device("cuda") if th.cuda.is_available() else th.device("cpu")
