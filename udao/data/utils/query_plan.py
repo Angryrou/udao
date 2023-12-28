@@ -80,7 +80,9 @@ class QueryPlanStructure:
         self.incoming_ids = incoming_ids
         self.outgoing_ids = outgoing_ids
         self.node_id2name = {i: n for i, n in enumerate(node_names)}
-        self.graph: dgl.DGLGraph = dgl.graph((incoming_ids, outgoing_ids))
+        self.graph: dgl.DGLGraph = dgl.graph(
+            (incoming_ids, outgoing_ids), num_nodes=len(node_names)
+        )
         self._nx_graph: Optional[nx.Graph] = None
 
     @property
