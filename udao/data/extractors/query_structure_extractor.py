@@ -2,6 +2,7 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
+from ...utils.logging import logger
 from ..containers import QueryStructureContainer
 from ..utils.query_plan import (
     QueryPlanOperationFeatures,
@@ -58,15 +59,16 @@ class QueryStructureExtractor(TrainedExtractor[QueryStructureContainer]):
                 break
 
         if tid is None:
-            if split == "train":
-                tid = len(self.template_plans) + 1
-                if self.positional_encoding_size:
-                    structure.graph = add_positional_encoding(
-                        structure.graph, self.positional_encoding_size
-                    )
-                self.template_plans[tid] = structure
-            else:
-                raise KeyError("Unknown template plan")
+            tid = len(self.template_plans) + 1
+            if self.positional_encoding_size:
+                structure.graph = add_positional_encoding(
+                    structure.graph, self.positional_encoding_size
+                )
+            self.template_plans[tid] = structure
+            if split != "train":
+                logger.warning(
+                    f"Unknown template plan in test or validation set, set as {tid}"
+                )
         return tid
 
     def _extract_structure_and_features(

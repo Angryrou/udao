@@ -14,7 +14,7 @@ def train_test_val_split_on_column(
     *,
     val_frac: float,
     test_frac: float,
-    random_state: Optional[int] = None
+    random_state: Optional[int] = None,
 ) -> Dict[DatasetType, pd.DataFrame]:
     """return a dictionary of DatasetType (train/val/test) and the DataFrame"""
     train_df, non_train_df = train_test_split(
