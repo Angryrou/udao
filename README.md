@@ -1,5 +1,9 @@
 # UDAO
-the Unified Data Analytics Optimizer (UDAO) package enables the optimization of data analytics pipelines.
+This repository is the home of the UDAO library - a next-generation unified data analytics optimizer.
+
+References:
+- [Spark-based Cloud Data Analytics using Multi-Objective Optimization](https://ieeexplore.ieee.org/document/9458826/)
+- [UDAO: a next-generation unified data analytics optimizer](https://dl.acm.org/doi/10.14778/3352063.3352103)
 
 ## Getting Started
 
@@ -11,11 +15,11 @@ Using pip:
 pip install udao
 ```
 
-## Install on GPU
+### Install on GPU
 
 The current GPU version relies on CUDA 11.8 and PyTorch 2.0.1. The following instructions are for installing the GPU version of UDAO.
 
-### Requirements
+#### Requirements
 
 Before installing, please make sure you have the following dependencies installed (using pip):
 
@@ -27,3 +31,18 @@ pip install torchaudio==2.0.2 -f https://download.pytorch.org/whl/cu118
 pip install dglgo==0.0.2
 pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
 ```
+
+### Documentation
+You can find the documentation on our (GitHub Pages)[https://angryrou.github.io/udao/]
+
+## Limitations
+
+Some known limitations:
+1. Limitations for pandas.DataFrame to work with a very large dataset.
+2. Categorical variables are always enumerated in MOGD.
+3. Preprocessed data are not cached for reusing in hyper-parameter tuning
+
+## Contributing
+
+We welcome contributions!
+You can go to [CONTRIBUTING.md](CONTRIBUTING.md) for more information.

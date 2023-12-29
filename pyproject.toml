@@ -62,11 +62,13 @@ dev = [
   "pre-commit==3.4.0",
   "types-requests==2.31.0.10",
   "requests==2.31.0",
-]
-test = [
   "pytest==7.4.2",
   "pytest-cov==4.1.0",
   "pytest-mock==3.12.0",
+  "sphinx==4.4.0",
+  "chardet==5.2.0",
+  "sphinx==^7.0.0",
+  "sphinx-book-theme==*",
 ]
 
 # List URLs that are relevant to your project
