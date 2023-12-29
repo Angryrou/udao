@@ -70,10 +70,13 @@ class TestStructureExtractor:
             ],
             names=["plan_id", "operation_id"],
         )
-        assert structure_container.graph_meta_features is not None
-        assert structure_container.graph_meta_features.shape == (len(df_fixture), 2)
+        assert (
+            graph_meta_features := structure_container.graph_meta_features
+        ) is not None
+        assert graph_meta_features.shape == (len(df_fixture), 2)
+
         np.testing.assert_array_equal(
-            structure_container.graph_meta_features.columns, ["rows_count", "size"]
+            graph_meta_features.columns, ["rows_count", "size"]
         )
         assert (multi_index == structure_container.graph_features.index).all()
 
@@ -99,6 +102,9 @@ class TestStructureExtractor:
                 row.id, row.plan, "val"
             )
             for feature in ["rows_count", "size"]:
+                assert (
+                    graph_meta_features := structure_container.graph_meta_features
+                ) is not None
                 np.testing.assert_allclose(
                     structure_container.graph_features.loc[row.id][feature].values,
                     features_dict[feature],
@@ -106,7 +112,7 @@ class TestStructureExtractor:
                 )
                 assert structure_container.graph_meta_features is not None
                 np.testing.assert_allclose(
-                    structure_container.graph_meta_features.loc[row.id][feature],
+                    graph_meta_features.loc[row.id][feature],
                     features_dict[f"meta_{feature}"],
                     rtol=1e-6,
                 )
