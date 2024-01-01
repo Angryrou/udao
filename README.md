@@ -38,9 +38,10 @@ You can find the documentation on our (GitHub Pages)[https://angryrou.github.io/
 ## Limitations
 
 Some known limitations:
-1. Limitations for pandas.DataFrame to work with a very large dataset.
-2. Categorical variables are always enumerated in MOGD.
-3. Preprocessed data are not cached for reusing in hyper-parameter tuning
+1. Pandas DataFrame may have limitations when working with very large datasets.
+2. Optimization algorithms require independent functions for each objective or constraint, impacting optimization speed, which may not match the speed achieved in our referenced papers (a fix is planned soon)
+3. Categorical variables are always enumerated in MOGD.
+4. Preprocessed data is not cached for reuse in hyper-parameter tuning
 
 ## Contributing
 
