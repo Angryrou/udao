@@ -22,7 +22,7 @@ maintainers = [
 name = "udao" # Required
 readme = "README.md" # Optional
 requires-python = ">=3.9"
-version = "1.0.0" # Required
+version = "1.0.1" # Required
 
 # Classifiers help users find your project by categorizing it.
 # For a list of valid classifiers, see https://pypi.org/classifiers/
