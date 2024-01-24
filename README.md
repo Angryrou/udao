@@ -25,11 +25,11 @@ Before installing, please make sure you have the following dependencies installe
 
 ```
 pip install cuda-python==11.8
-pip install torch==2.0.1 -f https://download.pytorch.org/whl/cu118
-pip install torchvision==0.15.2 -f https://download.pytorch.org/whl/cu118
-pip install torchaudio==2.0.2 -f https://download.pytorch.org/whl/cu118
+pip install torch==2.0.1+cu118 --index-url https://download.pytorch.org/whl/cu118
+pip install torchvision==0.15.2+cu118 --index-url https://download.pytorch.org/whl/cu118
+pip install torchaudio==2.0.2+cu118 --index-url https://download.pytorch.org/whl/cu118
 pip install dglgo==0.0.2
-pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
+pip install dgl==1.1.3 -f https://data.dgl.ai/wheels/cu118/repo.html
 ```
 
 ### Documentation
