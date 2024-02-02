@@ -24,12 +24,12 @@ The current GPU version relies on CUDA 11.8 and PyTorch 2.0.1. The following ins
 Before installing, please make sure you have the following dependencies installed (using pip):
 
 ```
-pip install cuda-python==11.8
-pip install torch==2.0.1+cu118 --index-url https://download.pytorch.org/whl/cu118
-pip install torchvision==0.15.2+cu118 --index-url https://download.pytorch.org/whl/cu118
-pip install torchaudio==2.0.2+cu118 --index-url https://download.pytorch.org/whl/cu118
-pip install dglgo==0.0.2
-pip install dgl==1.1.3 -f https://data.dgl.ai/wheels/cu118/repo.html
+  pip install cuda-python==11.8
+  pip install torch==2.0.1+cu118 --index-url https://download.pytorch.org/whl/cu118
+  pip install torchvision==0.15.2+cu118 --index-url https://download.pytorch.org/whl/cu118
+  pip install torchaudio==2.0.2+cu118 --index-url https://download.pytorch.org/whl/cu118
+  pip install dglgo==0.0.2
+  pip install dgl==1.1.3 -f https://data.dgl.ai/wheels/cu118/repo.html
 ```
 
 ### Documentation
