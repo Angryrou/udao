@@ -39,7 +39,7 @@ class QueryStructureContainer(BaseContainer):
             else self.graph_meta_features.loc[key].values
         )
         template_id = self.key_to_template[key]
-        template_graph = self.template_plans[template_id].graph
+        template_graph = self.template_plans[template_id].graph.clone()
         operation_types = self.operation_types.loc[key].values
         return QueryDescription(
             template_graph,
