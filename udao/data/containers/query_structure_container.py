@@ -10,6 +10,7 @@ from ..utils.query_plan import QueryPlanStructure
 
 @dataclass
 class QueryDescription:
+    template_id: int
     template_graph: dgl.DGLGraph
     graph_features: Iterable
     meta_features: Optional[Iterable]
@@ -42,6 +43,7 @@ class QueryStructureContainer(BaseContainer):
         template_graph = self.template_plans[template_id].graph.clone()
         operation_types = self.operation_types.loc[key].values
         return QueryDescription(
+            template_id,
             template_graph,
             graph_features,
             graph_meta_features,
