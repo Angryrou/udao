@@ -130,14 +130,16 @@ class RAALMultiHeadAttentionLayer(MultiHeadAttentionLayer):
     def compute_attention(self, g: dgl.DGLGraph) -> dgl.DGLGraph:
         """Attention mechanism with non-siblings attention"""
         g_list = dgl.unbatch(g)
-        sid_g_map: Dict[int, List[Tuple[int, dgl.DGLGraph]]] = defaultdict(list)
+        sid_g_map: Dict[int, List[dgl.DGLGraph]] = defaultdict(list)
+        sid_g_batch_ids: Dict[int, List[int]] = defaultdict(list)
+
         for gid, gg in enumerate(g_list):
             sid = gg.ndata["sid"][0].detach().cpu().item()
-            sid_g_map[sid].append((gid, gg))
+            sid_g_map[sid].append(gg)
+            sid_g_batch_ids[sid].append(gid)
 
-        processed_graphs: List[Tuple[int, dgl.DGLGraph]] = []
-        for sid, indexed_graphs in sid_g_map.items():
-            indices, graphs = zip(*indexed_graphs)
+        sid_gb_map: Dict[int, dgl.DGLGraph] = defaultdict(list)
+        for sid, graphs in sid_g_map.items():
             gb = dgl.batch(graphs)
             n_graphs = len(graphs)
             Q = gb.ndata["Q_h"].reshape(n_graphs, -1, self.n_heads, self.out_dim)  # type: ignore
@@ -159,10 +161,13 @@ class RAALMultiHeadAttentionLayer(MultiHeadAttentionLayer):
                 )
             ]
             gb.edata["score"] = torch.cat(score_list, dim=1).view(-1, self.n_heads, 1)
-            processed_graphs.extend(zip(indices, dgl.unbatch(gb)))
-        processed_graphs.sort(key=lambda x: x[0])
-        gb_list = [graph for _, graph in processed_graphs]
-        return dgl.batch(gb_list)
+            sid_gb_map[sid] = gb
+
+        for sid, gb in sid_gb_map.items():
+            g_batch_inds = sid_g_batch_ids[sid]
+            for batch_id, new_g in zip(g_batch_inds, dgl.unbatch(gb)):
+                g_list[batch_id] = new_g
+        return dgl.batch(g_list)
 
 
 class QFMultiHeadAttentionLayer(MultiHeadAttentionLayer):
