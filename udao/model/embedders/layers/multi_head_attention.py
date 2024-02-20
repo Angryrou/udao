@@ -131,14 +131,17 @@ class RAALMultiHeadAttentionLayer(MultiHeadAttentionLayer):
         """Attention mechanism with non-siblings attention"""
         g_list = dgl.unbatch(g)
         sid_g_map: Dict[int, List[dgl.DGLGraph]] = defaultdict(list)
-        for gg in g_list:
-            sid = gg.ndata["sid"][0].cpu().item()
-            sid_g_map[sid].append(gg)
+        sid_g_batch_ids: Dict[int, List[int]] = defaultdict(list)
 
-        gb_list = []
+        for gid, gg in enumerate(g_list):
+            sid = gg.ndata["sid"][0].detach().cpu().item()
+            sid_g_map[sid].append(gg)
+            sid_g_batch_ids[sid].append(gid)
+
+        sid_gb_map: Dict[int, dgl.DGLGraph] = defaultdict(list)
         for sid, graphs in sid_g_map.items():
-            n_graphs = len(graphs)
             gb = dgl.batch(graphs)
+            n_graphs = len(graphs)
             Q = gb.ndata["Q_h"].reshape(n_graphs, -1, self.n_heads, self.out_dim)  # type: ignore
             K = gb.ndata["K_h"].reshape(n_graphs, -1, self.n_heads, self.out_dim)  # type: ignore
             QK = (
@@ -158,8 +161,13 @@ class RAALMultiHeadAttentionLayer(MultiHeadAttentionLayer):
                 )
             ]
             gb.edata["score"] = torch.cat(score_list, dim=1).view(-1, self.n_heads, 1)
-            gb_list.append(gb)
-        return dgl.batch(gb_list)
+            sid_gb_map[sid] = gb
+
+        for sid, gb in sid_gb_map.items():
+            g_batch_inds = sid_g_batch_ids[sid]
+            for batch_id, new_g in zip(g_batch_inds, dgl.unbatch(gb)):
+                g_list[batch_id] = new_g
+        return dgl.batch(g_list)
 
 
 class QFMultiHeadAttentionLayer(MultiHeadAttentionLayer):

@@ -40,12 +40,11 @@ class GraphTransformerLayer(nn.Module):
         Whether to use bias, by default False
     attention_layer_name : AttentionLayerName, optional
         Choice of the kind of attention layer, by default "GTN"
-    non_siblings_map : Optional[Dict[int, Dict[int, List[int]]]], optional
-        For each type of graph, maps the edge id to
-        all nodes that are not siblings of its source node
     attention_bias : Optional[th.Tensor], optional
         by default None
-
+    non_siblings_map : Optional[Dict[int, Dict[int, List[int]]]], optional
+        For each type of graph, maps the node id to
+        all nodes that are not siblings of its source node
     Raises
     ------
     ValueError
@@ -65,8 +64,8 @@ class GraphTransformerLayer(nn.Module):
         residual: bool = True,
         use_bias: bool = False,
         attention_layer_name: AttentionLayerName = "GTN",
-        non_siblings_map: Optional[Dict[int, Dict[int, List[int]]]] = None,
         attention_bias: Optional[th.Tensor] = None,
+        non_siblings_map: Optional[Dict[int, Dict[int, List[int]]]] = None,
     ) -> None:
         super().__init__()
         self.attention_layer_name = attention_layer_name

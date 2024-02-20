@@ -139,6 +139,12 @@ class UdaoModule(pl.LightningModule):
         )
         return loss
 
+    def predict_step(
+        self, batch: Tuple[Any, th.Tensor], batch_idx: int, dataloader_idx: int = 0
+    ) -> th.Tensor:
+        features, _ = batch
+        return self.model(features)
+
     def on_train_epoch_end(self) -> None:
         self._shared_epoch_end("train")
 
