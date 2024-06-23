@@ -145,7 +145,7 @@ class UdaoModule(pl.LightningModule):
         features, _ = batch
         return self.model(features)
 
-    def on_train_epoch_end(self) -> None:
+    def on_validation_epoch_start(self) -> None:
         self._shared_epoch_end("train")
 
     def validation_step(self, batch: Tuple[Any, th.Tensor], batch_idx: int) -> None:
