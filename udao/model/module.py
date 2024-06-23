@@ -145,14 +145,21 @@ class UdaoModule(pl.LightningModule):
         features, _ = batch
         return self.model(features)
 
+    def _reset_metrics(self) -> None:
+        for objective in self.objectives:
+            cast(Metric, self.metrics[objective]).reset()
+
     def on_validation_epoch_start(self) -> None:
-        self._shared_epoch_end("train")
+        self._reset_metrics()
 
     def validation_step(self, batch: Tuple[Any, th.Tensor], batch_idx: int) -> None:
         self._shared_step(batch, "val")
 
     def on_validation_epoch_end(self) -> None:
         self._shared_epoch_end("val")
+
+    def on_test_epoch_start(self) -> None:
+        self._reset_metrics()
 
     def test_step(self, batch: Tuple[Any, th.Tensor], batch_idx: int) -> None:
         self._shared_step(batch, "test")
