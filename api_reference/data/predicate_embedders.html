@@ -1,0 +1,744 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Embedders &#8212; UDAO 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=a681ed88"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/data/predicate_embedders';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Model API" href="../model/index.html" />
+    <link rel="prev" title="DataHandler" href="data_handler.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">UDAO 1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/data_processing.html">Data processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/model.html">Modeling the objective function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization.html">Optimizing the objective function(s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization_element.html">Defining an optimization element</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/mogd.html">The case of MOGD</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Data processing API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="containers.html">Containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extractors.html">Extractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterators.html">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data_processor.html">DataProcessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data_handler.html">DataHandler</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Embedders</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model/index.html">Model API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model/embedders.html">Embedders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/regressors.html">Regressors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/udao_model.html">Udao Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../optimization/index.html">Optimization API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../optimization/concepts.html">Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../optimization/soo.html">Single Objective Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../optimization/moo.html">Multi-Objective Optimization</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api_reference/data/predicate_embedders.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Embedders</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.base_predicate_embedder">Base Predicate Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder"><code class="docutils literal notranslate"><span class="pre">BasePredicateEmbedder</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.word2vec_embedder">Word2Vec Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.fit_transform"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder.fit_transform()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.transform"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams"><code class="docutils literal notranslate"><span class="pre">Word2VecParams</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.doc2vec_embedder">Doc2Vec Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.fit"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder.fit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.transform"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams"><code class="docutils literal notranslate"><span class="pre">Doc2VecParams</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.utils">Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.brief_clean"><code class="docutils literal notranslate"><span class="pre">brief_clean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.build_unique_operations"><code class="docutils literal notranslate"><span class="pre">build_unique_operations()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.extract_operations"><code class="docutils literal notranslate"><span class="pre">extract_operations()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.prepare_operation"><code class="docutils literal notranslate"><span class="pre">prepare_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_hashes"><code class="docutils literal notranslate"><span class="pre">remove_hashes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_statistics"><code class="docutils literal notranslate"><span class="pre">remove_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_unknown"><code class="docutils literal notranslate"><span class="pre">remove_unknown()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.replace_symbols"><code class="docutils literal notranslate"><span class="pre">replace_symbols()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="embedders">
+<h1>Embedders<a class="headerlink" href="#embedders" title="Link to this heading">#</a></h1>
+<section id="module-udao.data.predicate_embedders.base_predicate_embedder">
+<span id="base-predicate-embedder"></span><h2>Base Predicate Embedder<a class="headerlink" href="#module-udao.data.predicate_embedders.base_predicate_embedder" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.base_predicate_embedder.</span></span><span class="sig-name descname"><span class="pre">BasePredicateEmbedder</span></span><a class="headerlink" href="#udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-udao.data.predicate_embedders.word2vec_embedder">
+<span id="word2vec-embedder"></span><h2>Word2Vec Embedder<a class="headerlink" href="#module-udao.data.predicate_embedders.word2vec_embedder" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.word2vec_embedder.</span></span><span class="sig-name descname"><span class="pre">Word2VecEmbedder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w2v_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams" title="udao.data.predicate_embedders.word2vec_embedder.Word2VecParams"><span class="pre">Word2VecParams</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder" title="udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePredicateEmbedder</span></code></a></p>
+<p>A class to embed query plans using Word2Vec.
+The embedding is computed as the average of the word
+embeddings of the words in the query plan.</p>
+<p>To use it:
+- first call fit_transform on a list of training query plans,
+- then call transform on a list of query plans.</p>
+<p>N.B. To ensure reproducibility, several things need to be done:
+- set the seed in the Word2VecParams
+- set the PYTHONHASHSEED
+- set the number of workers to 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>w2v_params</strong> (<a class="reference internal" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams" title="udao.data.predicate_embedders.word2vec_embedder.Word2VecParams"><em>Word2VecParams</em></a>) – Parameters to pass to the gensim.Word2Vec model
+(ref: <a class="reference external" href="https://radimrehurek.com/gensim/models/word2vec.html">https://radimrehurek.com/gensim/models/word2vec.html</a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.fit_transform" title="Link to this definition">#</a></dt>
+<dd><p>Train the Word2Vec model on the training texts and return the embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_texts</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – list of training texts</p></li>
+<li><p><strong>epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – number of epochs for training the model, by default will use the value
+in the Word2VecParams.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Embeddings of the training plans</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.transform" title="Link to this definition">#</a></dt>
+<dd><p>Transform a list of query plans into embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>texts</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – list of texts to transform</p></li>
+<li><p><strong>epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – number of epochs for infering a document’s embedding,
+by default will use the value in the Word2VecParams.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Embeddings of the query plans</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the model has not been trained</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.word2vec_embedder.Word2VecParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.word2vec_embedder.</span></span><span class="sig-name descname"><span class="pre">Word2VecParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0007</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parameters to pass to the gensim.Word2Vec model
+(ref: <a class="reference external" href="https://radimrehurek.com/gensim/models/word2vec.html">https://radimrehurek.com/gensim/models/word2vec.html</a>)</p>
+</dd></dl>
+
+</section>
+<section id="module-udao.data.predicate_embedders.doc2vec_embedder">
+<span id="doc2vec-embedder"></span><h2>Doc2Vec Embedder<a class="headerlink" href="#module-udao.data.predicate_embedders.doc2vec_embedder" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.doc2vec_embedder.</span></span><span class="sig-name descname"><span class="pre">Doc2VecEmbedder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d2v_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams" title="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams"><span class="pre">Doc2VecParams</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder" title="udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePredicateEmbedder</span></code></a></p>
+<p>A class to embed query plans using Doc2Vec.
+To use it:
+- first call fit_transform on a list of training query plans,
+- then call transform on a list of query plans.</p>
+<p>N.B. To ensure reproducibility, several things need to be done:
+- set the seed in the Doc2VecParams
+- set the PYTHONHASHSEED
+- set the number of workers to 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d2v_params</strong> (<a class="reference internal" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams" title="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams"><em>Doc2VecParams</em></a>) – Parameters to pass to the gensim.Doc2Vec model
+(ref: <a class="reference external" href="https://radimrehurek.com/gensim/models/doc2vec.html">https://radimrehurek.com/gensim/models/doc2vec.html</a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.fit" title="Link to this definition">#</a></dt>
+<dd><p>Train the Doc2Vec model on the training plans</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_plans</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – list of training plans</p></li>
+<li><p><strong>epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – number of epochs for training the model, by default
+will use the value in the Doc2VecParams.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized (L2) embeddings of the training plans</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.transform" title="Link to this definition">#</a></dt>
+<dd><p>Transform a list of query plans into normalized embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plans</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – list of query plans</p></li>
+<li><p><strong>epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – number of epochs for infering a document’s embedding,
+by default will use the value in the Doc2VecParams.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized (L2) embeddings of the query plans</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the model has not been trained</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.doc2vec_embedder.</span></span><span class="sig-name descname"><span class="pre">Doc2VecParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0007</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams" title="udao.data.predicate_embedders.word2vec_embedder.Word2VecParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">Word2VecParams</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-udao.data.predicate_embedders.utils">
+<span id="utilities"></span><h2>Utilities<a class="headerlink" href="#module-udao.data.predicate_embedders.utils" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.brief_clean">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">brief_clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.brief_clean" title="Link to this definition">#</a></dt>
+<dd><p>Remove special characters from a string and convert to lower case</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.build_unique_operations">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">build_unique_operations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.build_unique_operations" title="Link to this definition">#</a></dt>
+<dd><p>Build a dictionary of unique operations and their IDs</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.extract_operations">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">extract_operations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">plan_df:</span> <span class="pre">~pandas.core.frame.DataFrame,</span> <span class="pre">operation_processing:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.extract_operations" title="Link to this definition">#</a></dt>
+<dd><p>Extract unique operations from a DataFrame of
+query plans and links them to query plans.
+Operations are transformed using prepare_operation
+to remove statistical information and hashes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plan_df</strong> (<em>pd.DataFrame</em>) – DataFrame containing the query plans and their ids.</p></li>
+<li><p><strong>operation_processing</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – Function to process the operations, by default no processing will be applied
+and the raw operations will be used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>plan_to_ops: Dict[int, List[int]]</dt><dd><p>Links a query plan ID to a list of operation IDs in the operations list</p>
+</dd>
+<dt>operations_list: List[str]</dt><dd><p>List of unique operations in the dataset</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict[int, List[int]], List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.prepare_operation">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">prepare_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.prepare_operation" title="Link to this definition">#</a></dt>
+<dd><p>Prepare an operation for embedding by keeping only
+relevant semantic information</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.remove_hashes">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">remove_hashes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.remove_hashes" title="Link to this definition">#</a></dt>
+<dd><p>Remove hashes from a query plan, e.g. #1234L</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.remove_statistics">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">remove_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.remove_statistics" title="Link to this definition">#</a></dt>
+<dd><p>Remove statistical information from a query plan
+(in the form of Statistics(…)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.remove_unknown">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">remove_unknown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.remove_unknown" title="Link to this definition">#</a></dt>
+<dd><p>Remove unknown symbol from a query plan
+(in the form of (unknown))</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udao.data.predicate_embedders.utils.replace_symbols">
+<span class="sig-prename descclassname"><span class="pre">udao.data.predicate_embedders.utils.</span></span><span class="sig-name descname"><span class="pre">replace_symbols</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#udao.data.predicate_embedders.utils.replace_symbols" title="Link to this definition">#</a></dt>
+<dd><p>Replace symbols with tokens</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="data_handler.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DataHandler</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../model/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Model API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.base_predicate_embedder">Base Predicate Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.base_predicate_embedder.BasePredicateEmbedder"><code class="docutils literal notranslate"><span class="pre">BasePredicateEmbedder</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.word2vec_embedder">Word2Vec Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.fit_transform"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder.fit_transform()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecEmbedder.transform"><code class="docutils literal notranslate"><span class="pre">Word2VecEmbedder.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.word2vec_embedder.Word2VecParams"><code class="docutils literal notranslate"><span class="pre">Word2VecParams</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.doc2vec_embedder">Doc2Vec Embedder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.fit"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder.fit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecEmbedder.transform"><code class="docutils literal notranslate"><span class="pre">Doc2VecEmbedder.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.doc2vec_embedder.Doc2VecParams"><code class="docutils literal notranslate"><span class="pre">Doc2VecParams</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.data.predicate_embedders.utils">Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.brief_clean"><code class="docutils literal notranslate"><span class="pre">brief_clean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.build_unique_operations"><code class="docutils literal notranslate"><span class="pre">build_unique_operations()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.extract_operations"><code class="docutils literal notranslate"><span class="pre">extract_operations()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.prepare_operation"><code class="docutils literal notranslate"><span class="pre">prepare_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_hashes"><code class="docutils literal notranslate"><span class="pre">remove_hashes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_statistics"><code class="docutils literal notranslate"><span class="pre">remove_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.remove_unknown"><code class="docutils literal notranslate"><span class="pre">remove_unknown()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.data.predicate_embedders.utils.replace_symbols"><code class="docutils literal notranslate"><span class="pre">replace_symbols()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Julien Fontanarava, Chenghao Lyu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023, Chenghao Lyu.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

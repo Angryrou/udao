@@ -1,0 +1,880 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Multi-Objective Optimization &#8212; UDAO 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=a681ed88"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/optimization/moo';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Single Objective Optimization" href="soo.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">UDAO 1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/data_processing.html">Data processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/model.html">Modeling the objective function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization.html">Optimizing the objective function(s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization_element.html">Defining an optimization element</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/mogd.html">The case of MOGD</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../data/index.html">Data processing API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../data/containers.html">Containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/extractors.html">Extractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/iterators.html">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/data_handler.html">DataHandler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/predicate_embedders.html">Embedders</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model/index.html">Model API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model/embedders.html">Embedders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/regressors.html">Regressors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/udao_model.html">Udao Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Optimization API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soo.html">Single Objective Optimization</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Multi-Objective Optimization</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api_reference/optimization/moo.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multi-Objective Optimization</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.mo_solver">Base MOO</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.mo_solver.MOSolver"><code class="docutils literal notranslate"><span class="pre">MOSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.mo_solver.MOSolver.solve"><code class="docutils literal notranslate"><span class="pre">MOSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.weighted_sum">Weighted Sum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum"><code class="docutils literal notranslate"><span class="pre">WeightedSum</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.allow_cache"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.allow_cache</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.device"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.normalize"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.normalize</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.so_solver"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.so_solver</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.ws_pairs"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.ws_pairs</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.solve"><code class="docutils literal notranslate"><span class="pre">WeightedSum.solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.function"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective.function()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.to"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective.to()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.base_progressive_frontier">Base Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.Params</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_anchor_point"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.get_anchor_point()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_utopia_and_nadir"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.get_utopia_and_nadir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.sequential_progressive_frontier">Sequential Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params.n_probes"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.Params.n_probes</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.generate_sub_rectangles"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.generate_sub_rectangles()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.solve"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.parallel_progressive_frontier">Parallel Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.max_iters"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.max_iters</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.n_grids"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.n_grids</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.processes"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.processes</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.parallel_soo"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.parallel_soo()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.solve"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="multi-objective-optimization">
+<h1>Multi-Objective Optimization<a class="headerlink" href="#multi-objective-optimization" title="Link to this heading">#</a></h1>
+<section id="module-udao.optimization.moo.mo_solver">
+<span id="base-moo"></span><h2>Base MOO<a class="headerlink" href="#module-udao.optimization.moo.mo_solver" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.mo_solver.MOSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.mo_solver.</span></span><span class="sig-name descname"><span class="pre">MOSolver</span></span><a class="headerlink" href="#udao.optimization.moo.mo_solver.MOSolver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.mo_solver.MOSolver.solve">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#udao.optimization.moo.mo_solver.MOSolver.solve" title="Link to this definition">#</a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.MOProblem"><em>MOProblem</em></a>) – Multi-objective optimization problem to solve</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Random seed, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of the objectives values and the variables
+that optimize the objective</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.moo.weighted_sum">
+<span id="weighted-sum"></span><h2>Weighted Sum<a class="headerlink" href="#module-udao.optimization.moo.weighted_sum" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.weighted_sum.</span></span><span class="sig-name descname"><span class="pre">WeightedSum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params" title="udao.optimization.moo.weighted_sum.WeightedSum.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.mo_solver.MOSolver" title="udao.optimization.moo.mo_solver.MOSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">MOSolver</span></code></a></p>
+<p>Weighted Sum (WS) algorithm for MOO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ws_pairs</strong> (<em>np.ndarray</em><em>,</em>) – weight settings for all objectives, of shape (n_weights, n_objs)</p></li>
+<li><p><strong>inner_solver</strong> (<em>BaseSolver</em><em>,</em>) – the solver used in Weighted Sum</p></li>
+<li><p><strong>objectives</strong> (<em>List</em><em>[</em><a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.Objective"><em>Objective</em></a><em>]</em><em>,</em>) – objective functions</p></li>
+<li><p><strong>constraints</strong> (<em>List</em><em>[</em><a class="reference internal" href="concepts.html#udao.optimization.Constraint" title="udao.optimization.Constraint"><em>Constraint</em></a><em>]</em><em>,</em>) – constraint functions</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ws_pairs:</span> <span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">so_solver:</span> <span class="pre">udao.optimization.soo.so_solver.SOSolver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_cache:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device:</span> <span class="pre">Optional[torch.device]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params.allow_cache">
+<span class="sig-name descname"><span class="pre">allow_cache</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.allow_cache" title="Link to this definition">#</a></dt>
+<dd><p>whether to cache the objective values</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.device" title="Link to this definition">#</a></dt>
+<dd><p>device on which to perform torch operations, by default available device.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.normalize" title="Link to this definition">#</a></dt>
+<dd><p>whether to normalize objective values to [0, 1] before applying WS</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params.so_solver">
+<span class="sig-name descname"><span class="pre">so_solver</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="soo.html#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><span class="pre">SOSolver</span></a></em><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.so_solver" title="Link to this definition">#</a></dt>
+<dd><p>solver for SOO</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.Params.ws_pairs">
+<span class="sig-name descname"><span class="pre">ws_pairs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.ws_pairs" title="Link to this definition">#</a></dt>
+<dd><p>weight sets for all objectives, of shape (n_weights, n_objs)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSum.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSum.solve" title="Link to this definition">#</a></dt>
+<dd><p>solve MOO problem by Weighted Sum (WS)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<em>List</em><em>[</em><a class="reference internal" href="concepts.html#udao.optimization.Variable" title="udao.optimization.Variable"><em>Variable</em></a><em>]</em>) – List of the variables to be optimized.</p></li>
+<li><p><strong>input_parameters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – Fixed input parameters expected by
+the objective functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pareto solutions and corresponding variables.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Optional[np.ndarray],Optional[np.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSumObjective">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.weighted_sum.</span></span><span class="sig-name descname"><span class="pre">WeightedSumObjective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.concepts.objective.Objective"><code class="xref py py-class docutils literal notranslate"><span class="pre">Objective</span></code></a></p>
+<p>Weighted Sum Objective</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSumObjective.function">
+<span class="sig-name descname"><span class="pre">function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.function" title="Link to this definition">#</a></dt>
+<dd><p>Sum of weighted normalized objectives</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.weighted_sum.WeightedSumObjective.to">
+<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective" title="udao.optimization.moo.weighted_sum.WeightedSumObjective"><span class="pre">WeightedSumObjective</span></a></span></span><a class="headerlink" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.to" title="Link to this definition">#</a></dt>
+<dd><p>Move objective to device</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.moo.progressive_frontier.base_progressive_frontier">
+<span id="base-progressive-frontier"></span><h2>Base Progressive Frontier<a class="headerlink" href="#module-udao.optimization.moo.progressive_frontier.base_progressive_frontier" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.progressive_frontier.base_progressive_frontier.</span></span><span class="sig-name descname"><span class="pre">BaseProgressiveFrontier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="soo.html#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><span class="pre">SOSolver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params" title="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.mo_solver.MOSolver" title="udao.optimization.moo.mo_solver.MOSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">MOSolver</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for Progressive Frontier.
+Includes the common methods for Progressive Frontier.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parameters for Progressive Frontier</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_anchor_point">
+<span class="sig-name descname"><span class="pre">get_anchor_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Point</span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_anchor_point" title="Link to this definition">#</a></dt>
+<dd><p>Find the anchor point for the given objective,
+by unbounded single objective optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.MOProblem"><em>MOProblem</em></a>) – MOO problem in which the objective is to be optimized</p></li>
+<li><p><strong>obj_ind</strong> (<em>int</em>) – index of the objective to be optimized</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>anchor point for the given objective</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_utopia_and_nadir">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_utopia_and_nadir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Point</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Point</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Point</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_utopia_and_nadir" title="Link to this definition">#</a></dt>
+<dd><p>get the utopia and nadir points from a list of points
+:param points: each element is a Point (defined class).
+:type points: list[Point],</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>utopia and nadir point</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[Point, Point]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.moo.progressive_frontier.sequential_progressive_frontier">
+<span id="sequential-progressive-frontier"></span><h2>Sequential Progressive Frontier<a class="headerlink" href="#module-udao.optimization.moo.progressive_frontier.sequential_progressive_frontier" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.</span></span><span class="sig-name descname"><span class="pre">SequentialProgressiveFrontier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="soo.html#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><span class="pre">SOSolver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params" title="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier" title="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseProgressiveFrontier</span></code></a></p>
+<p>Sequential Progressive Frontier -
+a progressive frontier algorithm that explores the uncertainty space
+sequentially, by dividing the space into subrectangles and
+exploring the subrectangles one by one.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_probes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params" title="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params.n_probes">
+<span class="sig-name descname"><span class="pre">n_probes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params.n_probes" title="Link to this definition">#</a></dt>
+<dd><p>number of probes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.generate_sub_rectangles">
+<span class="sig-name descname"><span class="pre">generate_sub_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utopia</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">middle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">successful</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Rectangle</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.generate_sub_rectangles" title="Link to this definition">#</a></dt>
+<dd><p>Generate uncertainty space to be explored:
+- if starting from successful optimum as middle, excludes the dominated
+space (middle as utopia and nadir as nadir)
+- if starting from unsuccessful optimum as middle, excludes the space where
+all constraining objectives are lower than the middle point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>utopia</strong> (<em>Point</em>) – the utopia point</p></li>
+<li><p><strong>nadir</strong> (<em>Point</em>) – the nadir point</p></li>
+<li><p><strong>middle</strong> (<em>Point</em>) – the middle point generated by
+the constrained single objective optimization</p></li>
+<li><p><strong>successful</strong> (<em>bool</em>) – whether the middle point is from a successful optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sub rectangles to be explored</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Rectangle]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve MOO by Progressive Frontier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.MOProblem"><em>MOProblem</em></a>) – MOO problem to be solved</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>optimal objectives and variables
+None, None if no solution is found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[np.ndarray | None, np.ndarray | None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.moo.progressive_frontier.parallel_progressive_frontier">
+<span id="parallel-progressive-frontier"></span><h2>Parallel Progressive Frontier<a class="headerlink" href="#module-udao.optimization.moo.progressive_frontier.parallel_progressive_frontier" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.</span></span><span class="sig-name descname"><span class="pre">ParallelProgressiveFrontier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="soo.html#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><span class="pre">SOSolver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params" title="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier" title="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseProgressiveFrontier</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_grids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params" title="udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.max_iters">
+<span class="sig-name descname"><span class="pre">max_iters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.max_iters" title="Link to this definition">#</a></dt>
+<dd><p>Number of iterations to explore the space</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.n_grids">
+<span class="sig-name descname"><span class="pre">n_grids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.n_grids" title="Link to this definition">#</a></dt>
+<dd><p>Number of splits per objective</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.processes">
+<span class="sig-name descname"><span class="pre">processes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.processes" title="Link to this definition">#</a></dt>
+<dd><p>Processes to use for parallel processing</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.parallel_soo">
+<span class="sig-name descname"><span class="pre">parallel_soo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.concepts.objective.Objective"><span class="pre">Objective</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.parallel_soo" title="Link to this definition">#</a></dt>
+<dd><p>Parallel calls to SOO Solver for each cell in cell_list, returns a
+candidate tuple (objective_value, variables) for each cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objective</strong> (<a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.Objective"><em>Objective</em></a>) – Objective to be optimized</p></li>
+<li><p><strong>cell_list</strong> (<em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – List of cells to be optimized
+(a cell is a dict of bounds for each objective)</p></li>
+<li><p><strong>input_parameters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fixed parameters to be passed , by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of candidate tuples (objective_value, variables)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Tuple[float, Dict[str, Any]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.concepts.problem.MOProblem"><span class="pre">MOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.solve" title="Link to this definition">#</a></dt>
+<dd><p>solve MOO by PF-AP (Progressive Frontier - Approximation Parallel)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.MOProblem" title="udao.optimization.MOProblem"><em>MOProblem</em></a>) – MOO problem to be solved</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>po_objs</strong> (<em>ndarray</em>) – Pareto optimal objective values, of shape
+(n_solutions, n_objs)</p></li>
+<li><p><strong>po_vars</strong> (<em>ndarray</em>) – corresponding variables of Pareto solutions, of shape
+(n_solutions, n_vars)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="soo.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Single Objective Optimization</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.mo_solver">Base MOO</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.mo_solver.MOSolver"><code class="docutils literal notranslate"><span class="pre">MOSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.mo_solver.MOSolver.solve"><code class="docutils literal notranslate"><span class="pre">MOSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.weighted_sum">Weighted Sum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum"><code class="docutils literal notranslate"><span class="pre">WeightedSum</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.allow_cache"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.allow_cache</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.device"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.normalize"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.normalize</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.so_solver"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.so_solver</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.Params.ws_pairs"><code class="docutils literal notranslate"><span class="pre">WeightedSum.Params.ws_pairs</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSum.solve"><code class="docutils literal notranslate"><span class="pre">WeightedSum.solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.function"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective.function()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.weighted_sum.WeightedSumObjective.to"><code class="docutils literal notranslate"><span class="pre">WeightedSumObjective.to()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.base_progressive_frontier">Base Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.Params</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_anchor_point"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.get_anchor_point()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.base_progressive_frontier.BaseProgressiveFrontier.get_utopia_and_nadir"><code class="docutils literal notranslate"><span class="pre">BaseProgressiveFrontier.get_utopia_and_nadir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.sequential_progressive_frontier">Sequential Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.Params.n_probes"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.Params.n_probes</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.generate_sub_rectangles"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.generate_sub_rectangles()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.sequential_progressive_frontier.SequentialProgressiveFrontier.solve"><code class="docutils literal notranslate"><span class="pre">SequentialProgressiveFrontier.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.moo.progressive_frontier.parallel_progressive_frontier">Parallel Progressive Frontier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.max_iters"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.max_iters</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.n_grids"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.n_grids</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.Params.processes"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.Params.processes</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.parallel_soo"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.parallel_soo()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.moo.progressive_frontier.parallel_progressive_frontier.ParallelProgressiveFrontier.solve"><code class="docutils literal notranslate"><span class="pre">ParallelProgressiveFrontier.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Julien Fontanarava, Chenghao Lyu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023, Chenghao Lyu.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Single Objective Optimization &#8212; UDAO 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=a681ed88"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/optimization/soo';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Multi-Objective Optimization" href="moo.html" />
+    <link rel="prev" title="Concepts" href="concepts.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">UDAO 1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/data_processing.html">Data processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/model.html">Modeling the objective function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization.html">Optimizing the objective function(s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/optimization_element.html">Defining an optimization element</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/mogd.html">The case of MOGD</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../data/index.html">Data processing API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../data/containers.html">Containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/extractors.html">Extractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/iterators.html">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/data_handler.html">DataHandler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/predicate_embedders.html">Embedders</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model/index.html">Model API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model/embedders.html">Embedders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/regressors.html">Regressors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/udao_model.html">Udao Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Optimization API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Single Objective Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="moo.html">Multi-Objective Optimization</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api_reference/optimization/soo.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Single Objective Optimization</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.so_solver">SO Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.so_solver.SOSolver"><code class="docutils literal notranslate"><span class="pre">SOSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.so_solver.SOSolver.solve"><code class="docutils literal notranslate"><span class="pre">SOSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.sampler_solver">Sampler Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver"><code class="docutils literal notranslate"><span class="pre">SamplerSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver.filter_on_constraints"><code class="docutils literal notranslate"><span class="pre">SamplerSolver.filter_on_constraints()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver.solve"><code class="docutils literal notranslate"><span class="pre">SamplerSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.grid_search_solver">Grid Search Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.device"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.n_grids_per_var"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params.n_grids_per_var</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.random_sampler_solver">Random Sampler Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.device"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.n_samples_per_param"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params.n_samples_per_param</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.mogd">MOGD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD"><code class="docutils literal notranslate"><span class="pre">MOGD</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params"><code class="docutils literal notranslate"><span class="pre">MOGD.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.batch_size"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.batch_size</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.constraint_stress"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.constraint_stress</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.device"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.dtype"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.dtype</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.learning_rate"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.learning_rate</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.max_iters"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.max_iters</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.multistart"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.multistart</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.objective_stress"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.objective_stress</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.patience"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.patience</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.strict_rounding"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.strict_rounding</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.constraints_loss"><code class="docutils literal notranslate"><span class="pre">MOGD.constraints_loss()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.get_meshed_categorical_vars"><code class="docutils literal notranslate"><span class="pre">MOGD.get_meshed_categorical_vars()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.objective_loss"><code class="docutils literal notranslate"><span class="pre">MOGD.objective_loss()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.solve"><code class="docutils literal notranslate"><span class="pre">MOGD.solve()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.within_objective_bounds"><code class="docutils literal notranslate"><span class="pre">MOGD.within_objective_bounds()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="single-objective-optimization">
+<h1>Single Objective Optimization<a class="headerlink" href="#single-objective-optimization" title="Link to this heading">#</a></h1>
+<section id="module-udao.optimization.soo.so_solver">
+<span id="so-solver"></span><h2>SO Solver<a class="headerlink" href="#module-udao.optimization.soo.so_solver" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.so_solver.SOSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.soo.so_solver.</span></span><span class="sig-name descname"><span class="pre">SOSolver</span></span><a class="headerlink" href="#udao.optimization.soo.so_solver.SOSolver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.so_solver.SOSolver.solve">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.concepts.problem.SOProblem"><span class="pre">SOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.soo.so_solver.SOSolver.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve a single-objective optimization problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.SOProblem"><em>SOProblem</em></a>) – Single-objective optimization problem to solve</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Random seed, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of the objective value and the variables
+that optimize the objective</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[float, Dict[str, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.soo.sampler_solver">
+<span id="sampler-solver"></span><h2>Sampler Solver<a class="headerlink" href="#module-udao.optimization.soo.sampler_solver" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.sampler_solver.SamplerSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.soo.sampler_solver.</span></span><span class="sig-name descname"><span class="pre">SamplerSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.sampler_solver.SamplerSolver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">SOSolver</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.sampler_solver.SamplerSolver.filter_on_constraints">
+<span class="sig-name descname"><span class="pre">filter_on_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_vars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.concepts.problem.SOProblem"><span class="pre">SOProblem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.soo.sampler_solver.SamplerSolver.filter_on_constraints" title="Link to this definition">#</a></dt>
+<dd><p>Keep only input variables that don’t violate constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wl_id</strong> (<em>str</em><em> | </em><em>None</em>) – workload id</p></li>
+<li><p><strong>input_vars</strong> (<em>np.ndarray</em>) – input variables</p></li>
+<li><p><strong>constraints</strong> (<em>List</em><em>[</em><a class="reference internal" href="concepts.html#udao.optimization.Constraint" title="udao.optimization.Constraint"><em>Constraint</em></a><em>]</em>) – constraint functions</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.sampler_solver.SamplerSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.concepts.problem.SOProblem"><span class="pre">SOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.soo.sampler_solver.SamplerSolver.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve a single-objective optimization problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objective</strong> (<a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.Objective"><em>Objective</em></a>) – Objective to be optimized</p></li>
+<li><p><strong>variables</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="concepts.html#udao.optimization.Variable" title="udao.optimization.Variable"><em>Variable</em></a><em>]</em>) – Variables to be optimized</p></li>
+<li><p><strong>constraints</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="concepts.html#udao.optimization.Constraint" title="udao.optimization.Constraint"><em>Constraint</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – List of constraints to comply with, by default None</p></li>
+<li><p><strong>input_parameters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fixed parameters input to objectives and/or constraints,
+by default None</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>by default None</em>) – random seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A point that satisfies the constraints
+and optimizes the objective</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Point</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NoSolutionError</strong> – If no feasible solution is found</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.soo.grid_search_solver">
+<span id="grid-search-solver"></span><h2>Grid Search Solver<a class="headerlink" href="#module-udao.optimization.soo.grid_search_solver" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.grid_search_solver.GridSearchSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.soo.grid_search_solver.</span></span><span class="sig-name descname"><span class="pre">GridSearchSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params" title="udao.optimization.soo.grid_search_solver.GridSearchSolver.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.soo.sampler_solver.SamplerSolver" title="udao.optimization.soo.sampler_solver.SamplerSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerSolver</span></code></a></p>
+<p>Solving a SOO problem by grid search over variables</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.grid_search_solver.GridSearchSolver.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">n_grids_per_var:</span> <span class="pre">List[int],</span> <span class="pre">device:</span> <span class="pre">Optional[torch.device]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.device" title="Link to this definition">#</a></dt>
+<dd><p>device on which to perform torch operations, by default available device.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.n_grids_per_var">
+<span class="sig-name descname"><span class="pre">n_grids_per_var</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.n_grids_per_var" title="Link to this definition">#</a></dt>
+<dd><p>List of grid sizes for each variable</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.soo.random_sampler_solver">
+<span id="random-sampler-solver"></span><h2>Random Sampler Solver<a class="headerlink" href="#module-udao.optimization.soo.random_sampler_solver" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.random_sampler_solver.RandomSamplerSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.soo.random_sampler_solver.</span></span><span class="sig-name descname"><span class="pre">RandomSamplerSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params" title="udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.soo.sampler_solver.SamplerSolver" title="udao.optimization.soo.sampler_solver.SamplerSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerSolver</span></code></a></p>
+<p>Solving a SOO problem by random sampling over variables</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples_per_param:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device:</span> <span class="pre">Optional[torch.device]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.device" title="Link to this definition">#</a></dt>
+<dd><p>device on which to perform torch operations, by default available device.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.n_samples_per_param">
+<span class="sig-name descname"><span class="pre">n_samples_per_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.n_samples_per_param" title="Link to this definition">#</a></dt>
+<dd><p>the number of samples per variable</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-udao.optimization.soo.mogd">
+<span id="mogd"></span><h2>MOGD<a class="headerlink" href="#module-udao.optimization.soo.mogd" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">udao.optimization.soo.mogd.</span></span><span class="sig-name descname"><span class="pre">MOGD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#udao.optimization.soo.mogd.MOGD.Params" title="udao.optimization.soo.mogd.MOGD.Params"><span class="pre">Params</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#udao.optimization.soo.so_solver.SOSolver" title="udao.optimization.soo.so_solver.SOSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">SOSolver</span></code></a></p>
+<p>MOGD solver for single-objective optimization.</p>
+<p>Performs gradient descent on input variables by minimizing an
+objective loss and a constraint loss.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">learning_rate:</span> <span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multistart:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective_stress:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint_stress:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_rounding:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device:</span> <span class="pre">Optional[torch.device]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype:</span> <span class="pre">torch.dtype</span> <span class="pre">=</span> <span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.batch_size" title="Link to this definition">#</a></dt>
+<dd><p>batch size for gradient descent</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.constraint_stress">
+<span class="sig-name descname"><span class="pre">constraint_stress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100000.0</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.constraint_stress" title="Link to this definition">#</a></dt>
+<dd><p>stress term for constraint functions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.device" title="Link to this definition">#</a></dt>
+<dd><p>device on which to perform torch operations, by default available device.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dtype</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">torch.float32</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.dtype" title="Link to this definition">#</a></dt>
+<dd><p>type of the tensors</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.learning_rate">
+<span class="sig-name descname"><span class="pre">learning_rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.learning_rate" title="Link to this definition">#</a></dt>
+<dd><p>learning rate of Adam optimizer applied to input variables</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.max_iters">
+<span class="sig-name descname"><span class="pre">max_iters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.max_iters" title="Link to this definition">#</a></dt>
+<dd><p>maximum number of iterations for a single local search</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.multistart">
+<span class="sig-name descname"><span class="pre">multistart</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.multistart" title="Link to this definition">#</a></dt>
+<dd><p>number of random starts for gradient descent</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.objective_stress">
+<span class="sig-name descname"><span class="pre">objective_stress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.objective_stress" title="Link to this definition">#</a></dt>
+<dd><p>stress term for objective functions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.patience">
+<span class="sig-name descname"><span class="pre">patience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.patience" title="Link to this definition">#</a></dt>
+<dd><p>maximum number of iterations without improvement</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.Params.strict_rounding">
+<span class="sig-name descname"><span class="pre">strict_rounding</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.Params.strict_rounding" title="Link to this definition">#</a></dt>
+<dd><p>whether strictly rounding integer variables at each iteration.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.constraints_loss">
+<span class="sig-name descname"><span class="pre">constraints_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constraint_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="concepts.html#udao.optimization.Constraint" title="udao.optimization.concepts.constraint.Constraint"><span class="pre">Constraint</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.constraints_loss" title="Link to this definition">#</a></dt>
+<dd><p>compute loss of the values of each constraint function fixme: double-check</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>constraint_values</strong> (<em>List</em><em>[</em><em>th.Tensor</em><em>]</em>) – values of each constraint function</p></li>
+<li><p><strong>constraints</strong> (<em>Sequence</em><em>[</em><em>co.Constraint</em><em>]</em>) – constraint functions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>loss of the values of each constraint function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>th.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.get_meshed_categorical_vars">
+<span class="sig-name descname"><span class="pre">get_meshed_categorical_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="concepts.html#udao.optimization.Variable" title="udao.optimization.concepts.variable.Variable"><span class="pre">Variable</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.get_meshed_categorical_vars" title="Link to this definition">#</a></dt>
+<dd><p>Get combinations of all categorical (binary, enum) variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>variables</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>co.Variable</em><em>]</em>) – Variables to be optimized</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Combinations of all categorical variables
+of shape (n_samples, n_vars)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.objective_loss">
+<span class="sig-name descname"><span class="pre">objective_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objective_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.concepts.objective.Objective"><span class="pre">Objective</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.objective_loss" title="Link to this definition">#</a></dt>
+<dd><p>Compute the objective loss for a given objective value:
+- if no bounds are specified, use the squared objective value
+- if both bounds are specified, use the squared normalized
+objective value if it is within the bounds, otherwise
+add a stress term to a squared distance to middle of the bounds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objective_value</strong> (<em>th.Tensor</em>) – Tensor of objective values</p></li>
+<li><p><strong>objective</strong> (<em>co.Objective</em>) – Objective function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of objective losses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>th.Tensor</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If only one bound is specified for the objective</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.concepts.problem.SOProblem"><span class="pre">SOProblem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve a single-objective optimization problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="concepts.html#udao.optimization.SOProblem" title="udao.optimization.SOProblem"><em>SOProblem</em></a>) – Single-objective optimization problem to solve</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Random seed, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of the objective value and the variables
+that optimize the objective</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[float, Dict[str, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="udao.optimization.soo.mogd.MOGD.within_objective_bounds">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">within_objective_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="concepts.html#udao.optimization.Objective" title="udao.optimization.concepts.objective.Objective"><span class="pre">Objective</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#udao.optimization.soo.mogd.MOGD.within_objective_bounds" title="Link to this definition">#</a></dt>
+<dd><p>check whether violating the objective value var_ranges
+:param pred_dict: dict, keys are objective names,
+values are objective values
+:param obj_bounds: dict, keys are objective names,
+values are lower and upper var_ranges of each objective value
+:return: True or False</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="concepts.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Concepts</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="moo.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Multi-Objective Optimization</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.so_solver">SO Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.so_solver.SOSolver"><code class="docutils literal notranslate"><span class="pre">SOSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.so_solver.SOSolver.solve"><code class="docutils literal notranslate"><span class="pre">SOSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.sampler_solver">Sampler Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver"><code class="docutils literal notranslate"><span class="pre">SamplerSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver.filter_on_constraints"><code class="docutils literal notranslate"><span class="pre">SamplerSolver.filter_on_constraints()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.sampler_solver.SamplerSolver.solve"><code class="docutils literal notranslate"><span class="pre">SamplerSolver.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.grid_search_solver">Grid Search Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.device"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.grid_search_solver.GridSearchSolver.Params.n_grids_per_var"><code class="docutils literal notranslate"><span class="pre">GridSearchSolver.Params.n_grids_per_var</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.random_sampler_solver">Random Sampler Solver</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.device"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.random_sampler_solver.RandomSamplerSolver.Params.n_samples_per_param"><code class="docutils literal notranslate"><span class="pre">RandomSamplerSolver.Params.n_samples_per_param</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-udao.optimization.soo.mogd">MOGD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD"><code class="docutils literal notranslate"><span class="pre">MOGD</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params"><code class="docutils literal notranslate"><span class="pre">MOGD.Params</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.batch_size"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.batch_size</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.constraint_stress"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.constraint_stress</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.device"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.device</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.dtype"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.dtype</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.learning_rate"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.learning_rate</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.max_iters"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.max_iters</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.multistart"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.multistart</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.objective_stress"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.objective_stress</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.patience"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.patience</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.Params.strict_rounding"><code class="docutils literal notranslate"><span class="pre">MOGD.Params.strict_rounding</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.constraints_loss"><code class="docutils literal notranslate"><span class="pre">MOGD.constraints_loss()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.get_meshed_categorical_vars"><code class="docutils literal notranslate"><span class="pre">MOGD.get_meshed_categorical_vars()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.objective_loss"><code class="docutils literal notranslate"><span class="pre">MOGD.objective_loss()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.solve"><code class="docutils literal notranslate"><span class="pre">MOGD.solve()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#udao.optimization.soo.mogd.MOGD.within_objective_bounds"><code class="docutils literal notranslate"><span class="pre">MOGD.within_objective_bounds()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Julien Fontanarava, Chenghao Lyu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023, Chenghao Lyu.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
